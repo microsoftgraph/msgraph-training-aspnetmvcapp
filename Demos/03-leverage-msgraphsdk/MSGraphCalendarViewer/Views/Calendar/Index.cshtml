@@ -1,0 +1,26 @@
+﻿@{
+        /**/
+
+        ViewBag.Title = "Home Page";
+}
+<div>
+  <table>
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Start</th>
+        <th>End</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var o365Event in ViewBag.Events)
+      {
+        <tr>
+          <td>@o365Event.Subject</td>
+          <td>@o365Event.Start</td>
+          <td>@o365Event.End</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
