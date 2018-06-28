@@ -14,6 +14,10 @@ In this lab you will create an ASP.NET MVC application, configured with Azure Ac
 * [Register a New Azure AD Application](./Demos/02-create-aad-app)
 * [Update the ASP.NET MVC Application to Leverage the Microsoft Graph .NET SDK](./Demos/03-leverage-msgraphsdk)
 
+## Watch the Module
+
+This module has been recorded and is available in the Office Development YouTube channel: [Build MVC apps with the Microsoft Graph .NET SDK](https://youtu.be/87_gpuFg1Wo)
+
 ## Contributors
 
 |        Roles         |                        Author(s)                        |
@@ -25,6 +29,7 @@ In this lab you will create an ASP.NET MVC application, configured with Azure Ac
 
 | Version |        Date        |                    Comments                    |
 | ------- | ------------------ | ---------------------------------------------- |
+| 1.2     | June 28, 2018      | Added screencast.                              |
 | 1.1     | June 04, 2018      | Rewritten to use latest guidance.              |
 | 1.0     | ~November 24, 2017 | Add Microsoft Graph related product breakouts. |
 
