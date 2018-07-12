@@ -1,4 +1,4 @@
-# Build ASP.NET MVC Web Application that leverages the Microsoft Graph .NET SDK
+# Build MVC apps with the Microsoft Graph .NET SDK
 
 In this lab you will create an ASP.NET MVC application, configured with Azure Active Directory (Azure AD) for authentication & authorization using the Microsoft Authentication Library (MSAL) & OWIN middleware, that accesses data in Office 365 using the Microsoft Graph .NET SDK.
 

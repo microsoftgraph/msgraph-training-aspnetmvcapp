@@ -1,8 +1,8 @@
-# Microsoft Graph Training Module - Build MVC apps with Microsoft Graph
+# Microsoft Graph Training Module - Build MVC apps with the Microsoft Graph .NET SDK
 
 This module will introduce you to working with the Microsoft Graph .NET SDK in creating an ASP.NET MVC web application to access data in Office 365.
 
-## Lab - Build ASP.NET MVC Web Application that leverages the Microsoft Graph .NET SDK
+## Lab - Build MVC apps with the Microsoft Graph .NET SDK
 
 In this lab you will create an ASP.NET MVC application, configured with Azure Active Directory (Azure AD) for authentication & authorization, that accesses data in Office 365 using the Microsoft Graph .NET SDK.
 
@@ -13,6 +13,10 @@ In this lab you will create an ASP.NET MVC application, configured with Azure Ac
 * [Create & Configure an ASP.NET MVC Web Application & Configure it for MSAL](./Demos/01-create-aspnet-mvcwebapp)
 * [Register a New Azure AD Application](./Demos/02-create-aad-app)
 * [Update the ASP.NET MVC Application to Leverage the Microsoft Graph .NET SDK](./Demos/03-leverage-msgraphsdk)
+
+## Watch the Module
+
+This module has been recorded and is available in the Office Development YouTube channel: [Build MVC apps with the Microsoft Graph .NET SDK](https://youtu.be/87_gpuFg1Wo)
 
 ## Contributors
 
@@ -25,6 +29,7 @@ In this lab you will create an ASP.NET MVC application, configured with Azure Ac
 
 | Version |        Date        |                    Comments                    |
 | ------- | ------------------ | ---------------------------------------------- |
+| 1.2     | June 28, 2018      | Added screencast.                              |
 | 1.1     | June 04, 2018      | Rewritten to use latest guidance.              |
 | 1.0     | ~November 24, 2017 | Add Microsoft Graph related product breakouts. |
 
