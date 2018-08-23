@@ -173,5 +173,5 @@ FakesAssemblies/
 **.DS_Store
 
 # Excluding unwanted files
-Teams/03 Bots/Completed Projects/Bot Application/.vs/
+.vs/
 .vscode/
