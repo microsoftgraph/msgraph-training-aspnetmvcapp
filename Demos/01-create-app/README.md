@@ -25,7 +25,7 @@ Before moving on, update the `bootstrap` NuGet package, and install some additio
 - [Microsoft.Owin.Host.SystemWeb](https://www.nuget.org/packages/Microsoft.Owin.Host.SystemWeb/) to enable the [OWIN](http://owin.org/) interfaces in the ASP.NET application.
 - [Microsoft.Owin.Security.OpenIdConnect](https://www.nuget.org/packages/Microsoft.Owin.Security.OpenIdConnect/) for doing OpenID Connect authentication with Azure.
 - [Microsoft.Owin.Security.Cookies](https://www.nuget.org/packages/Microsoft.Owin.Security.Cookies/) to enable cookie-based authentication.
-- [Microsoft.Identity.Client](https://www.nuget.org/packages/Microsoft.Identity.Client/1.1.4-preview0002) for requesting and managing access tokens.
+- [Microsoft.Identity.Client](https://www.nuget.org/packages/Microsoft.Identity.Client/) for requesting and managing access tokens.
 - [Microsoft.Graph](https://www.nuget.org/packages/Microsoft.Graph/) for making calls to the Microsoft Graph.
 
 Select **Tools > NuGet Package Manager > Package Manager Console**. In the Package Manager Console, enter the following commands.
@@ -203,7 +203,7 @@ using System.Web.Mvc;
 
 namespace graph_tutorial.Controllers
 {
-    public class BaseController : Controller
+    public abstract class BaseController : Controller
     {
         protected void Flash(string message, string debug=null)
         {
@@ -223,7 +223,11 @@ namespace graph_tutorial.Controllers
 }
 ```
 
-Any controller can inherit from this base controller class to gain access to the `Flash` function.
+Any controller can inherit from this base controller class to gain access to the `Flash` function. Update the `HomeController` class to inherit from `BaseController`. Open `Controllers/HomeController.cs` and change the `public class HomeController : Controller` line to:
+
+```cs
+public class HomeController : BaseController
+```
 
 Save all of your changes and restart the server. Now, the app should look very different.
 

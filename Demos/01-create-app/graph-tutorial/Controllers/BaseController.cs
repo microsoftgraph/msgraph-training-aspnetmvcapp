@@ -4,7 +4,7 @@ using System.Web.Mvc;
 
 namespace graph_tutorial.Controllers
 {
-    public class BaseController : Controller
+    public abstract class BaseController : Controller
     {
         protected void Flash(string message, string debug=null)
         {
