@@ -94,7 +94,7 @@ Now update the global layout of the app. Open the `./Views/Shared/_Layout.cshtml
                     @if (Request.IsAuthenticated)
                     {
                         <li class="nav-item" data-turbolinks="false">
-                            @Html.ActionLink("Home", "Index", "Calendar", new { area = "" }, new { @class = ViewBag.Current == "Calendar" ? "nav-link active" : "nav-link" })
+                            @Html.ActionLink("Calendar", "Index", "Calendar", new { area = "" }, new { @class = ViewBag.Current == "Calendar" ? "nav-link active" : "nav-link" })
                         </li>
                     }
                 </ul>
