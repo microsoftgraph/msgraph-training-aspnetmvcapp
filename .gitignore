@@ -175,3 +175,4 @@ FakesAssemblies/
 # Excluding unwanted files
 .vs/
 .vscode/
+PrivateSettings.config
