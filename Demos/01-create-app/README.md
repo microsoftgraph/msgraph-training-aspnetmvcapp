@@ -106,7 +106,7 @@ Now update the global layout of the app. Open the `./Views/Shared/_Layout.cshtml
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                @if (ViewBag.User.Avatar)
+                                @if (!string.IsNullOrEmpty(ViewBag.User.Avatar))
                                 {
                                     <img src="@ViewBag.User.Avatar" class="rounded-circle align-self-center mr-2" style="width: 32px;">
                                 }
