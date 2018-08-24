@@ -12,7 +12,7 @@ namespace graph_tutorial.Controllers
             if (!Request.IsAuthenticated)
             {
                 // Signal OWIN to send an authorization request to Azure
-                HttpContext.GetOwinContext().Authentication.Challenge(
+                Request.GetOwinContext().Authentication.Challenge(
                     new AuthenticationProperties { RedirectUri = "/" },
                     OpenIdConnectAuthenticationDefaults.AuthenticationType);
             }

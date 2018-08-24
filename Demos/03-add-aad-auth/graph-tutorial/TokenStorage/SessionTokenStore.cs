@@ -17,9 +17,9 @@ namespace graph_tutorial.TokenStorage
     public class SessionTokenStore
     {
         private static ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
-        private string userId = string.Empty;
-        private string cacheId = string.Empty;
-        private string cachedUserId = string.Empty;
+        private readonly string userId = string.Empty;
+        private readonly string cacheId = string.Empty;
+        private readonly string cachedUserId = string.Empty;
         private HttpContextBase httpContext = null;
 
         TokenCache tokenCache = new TokenCache();

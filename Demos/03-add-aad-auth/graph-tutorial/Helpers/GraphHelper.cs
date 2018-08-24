@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace graph_tutorial.Helpers
 {
-    public class GraphHelper
+    public static class GraphHelper
     {
         public static async Task<User> GetUserDetailsAsync(string accessToken)
         {

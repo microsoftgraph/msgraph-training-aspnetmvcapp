@@ -66,7 +66,7 @@ namespace graph_tutorial
             );
         }
 
-        private Task OnAuthenticationFailedAsync(AuthenticationFailedNotification<OpenIdConnectMessage,
+        private static Task OnAuthenticationFailedAsync(AuthenticationFailedNotification<OpenIdConnectMessage,
           OpenIdConnectAuthenticationOptions> notification)
         {
             notification.HandleResponse();

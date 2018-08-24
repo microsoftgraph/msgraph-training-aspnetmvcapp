@@ -92,7 +92,7 @@ namespace graph_tutorial
             );
         }
 
-        private Task OnAuthenticationFailedAsync(AuthenticationFailedNotification<OpenIdConnectMessage,
+        private static Task OnAuthenticationFailedAsync(AuthenticationFailedNotification<OpenIdConnectMessage,
           OpenIdConnectAuthenticationOptions> notification)
         {
             notification.HandleResponse();
@@ -184,7 +184,7 @@ namespace graph_tutorial.Controllers
             if (!Request.IsAuthenticated)
             {
                 // Signal OWIN to send an authorization request to Azure
-                HttpContext.GetOwinContext().Authentication.Challenge(
+                Request.GetOwinContext().Authentication.Challenge(
                     new AuthenticationProperties { RedirectUri = "/" },
                     OpenIdConnectAuthenticationDefaults.AuthenticationType);
             }
@@ -208,7 +208,7 @@ using System.Threading.Tasks;
 
 namespace graph_tutorial.Helpers
 {
-    public class GraphHelper
+    public static class GraphHelper
     {
         public static async Task<User> GetUserDetailsAsync(string accessToken)
         {
@@ -282,9 +282,9 @@ namespace graph_tutorial.TokenStorage
     public class SessionTokenStore
     {
         private static ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
-        private string userId = string.Empty;
-        private string cacheId = string.Empty;
-        private string cachedUserId = string.Empty;
+        private readonly string userId = string.Empty;
+        private readonly string cacheId = string.Empty;
+        private readonly string cachedUserId = string.Empty;
         private HttpContextBase httpContext = null;
 
         TokenCache tokenCache = new TokenCache();
