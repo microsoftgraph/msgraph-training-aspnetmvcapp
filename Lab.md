@@ -1,393 +1,917 @@
-# Build MVC apps with the Microsoft Graph .NET SDK
+# Build ASP.NET MVC apps with Microsoft Graph
 
 In this lab you will create an ASP.NET MVC application, configured with Azure Active Directory (Azure AD) for authentication & authorization using the Microsoft Authentication Library (MSAL) & OWIN middleware, that accesses data in Office 365 using the Microsoft Graph .NET SDK.
 
 ## In this lab
 
-1. [Create & Configure an ASP.NET MVC Web Application & Configure it for MSAL](#exercise1)
-1. [Register a New Azure AD Application](#exercise2)
-1. [Update the ASP.NET MVC Application to Leverage the Microsoft Graph .NET SDK](#exercise3)
+- [Exercise 1: Create an ASP.NET MVC Web Application](#exercise-1-create-an-aspnet-mvc-web-application)
+- [Register a web application with the Application Registration Portal](#exercise-2-register-a-web-application-with-the-application-registration-portal)
+- [Extend the app for Azure AD Authentication](#exercise-3-extend-the-app-for-azure-ad-authentication)
+- [Extend the app for Microsoft Graph](#exercise-4-extend-the-app-for-microsoft-graph)
 
 ## Prerequisites
 
 To complete this lab, you need the following:
 
-* Office 365 tenancy
-  * If you do not have one, you obtain one (for free) by signing up to the [Office 365 Developer Program](https://developer.microsoft.com/en-us/office/dev-program).
-* [Visual Studio 2017](https://www.visualstudio.com/vs)
+- [Visual Studio](https://visualstudio.microsoft.com/vs/) installed on your development machine. If you do not have Visual Studio, visit the previous link for download options. (**Note:** This tutorial was written with Visual Studio 2017 version 15.81. The steps in this guide may work with other versions, but that has not been tested.)
+- Either a personal Microsoft account with a mailbox on Outlook.com, or a Microsoft work or school account.
 
-<a name="exercise1"></a>
+If you don't have a Microsoft account, there are a couple of options to get a free account:
 
-## Exercise 1: Create & Configure an ASP.NET MVC Web Application & Configure it for MSAL
+- You can [sign up for a new personal Microsoft account](https://signup.live.com/signup?wa=wsignin1.0&rpsnv=12&ct=1454618383&rver=6.4.6456.0&wp=MBI_SSL_SHARED&wreply=https://mail.live.com/default.aspx&id=64855&cbcxt=mai&bk=1454618383&uiflavor=web&uaid=b213a65b4fdc484382b6622b3ecaa547&mkt=E-US&lc=1033&lic=1).
+- You can [sign up for the Office 365 Developer Program](https://developer.microsoft.com/office/dev-program) to get a free Office 365 subscription.
 
-In this exercise you will create a new ASP.NET MVC web application. After creating it, you will configure it to use the Microsoft Authentication Library (MSAL) to handle all authentication to acquire a token to call the Microsoft Graph API in a later exercise.
+## Exercise 1: Create an ASP.NET MVC Web Application
 
-1. Open Visual Studio 2017.
-1. In Visual Studio, select **File > New > Project**.
-1. In the **New Project** dialog, do the following:
-    1. Select **Templates > Visual C# > Web**.
-    1. Select **ASP.NET Web Application (.NET Framework)**.
-    1. Enter **MSGraphCalendarViewer** for the Name of the project.
+Open Visual Studio, and select **File > New > Project**. In the **New Project** dialog, do the following:
 
-        ![Visual Studio 2017 create new project dialog](./Images/vs-newproj-01.png)
+1. Select **Templates > Visual C# > Web**.
+1. Select **ASP.NET Web Application (.NET Framework)**.
+1. Enter **graph-tutorial** for the Name of the project.
 
-        > Note: Ensure that you enter the exact same name for the Visual Studio Project that is specified in these lab instructions. The Visual Studio Project name becomes part of the namespace in the code. The code inside these instructions depends on the namespace matching the Visual Studio Project name specified in these instructions. If you use a different project name the code will not compile unless you adjust all the namespaces to match the Visual Studio Project name you enter when you create the project.
+![Visual Studio 2017 create new project dialog](../../Images/vs-newproj-01.png)
 
-    1. Select **OK**.
-1. In the **New ASP.NET Web Application Project** dialog, do the following:
-    1. Select **MVC**.
-    1. Select **OK**.
+> Note: Ensure that you enter the exact same name for the Visual Studio Project that is specified in these lab instructions. The Visual Studio Project name becomes part of the namespace in the code. The code inside these instructions depends on the namespace matching the Visual Studio Project name specified in these instructions. If you use a different project name the code will not compile unless you adjust all the namespaces to match the Visual Studio Project name you enter when you create the project.
 
-1. Confirm the web project is using SSL by default:
+Select **OK**. In the **New ASP.NET Web Application Project** dialog, select **MVC** (under **ASP.NET 4.6.1 Templates**) and select **OK**.
 
-    1. In the **Solution Explorer** tool window, select the project and look at the **Properties** tool window.
-    1. Verify the property **SSL Enabled** is set to **TRUE**.
-    1. Copy the **SSL URL** property as you will need it later.
-    1. Save your changes.
+Press **F5** or select **Debug > Start Debugging**. If everything is working, your default browser should open and display a default ASP.NET page.
 
-        ![Screenshot of project property setting SSL to enabled.](./Images/vs-sslenabled.png)
+Before moving on, update the `bootstrap` NuGet package, and install some additional NuGet packages that you will use later.
 
-        > It is important to do this now because in the next step when you create the application in Azure AD, you want the reply URL to use HTTPS. If you did not do this now, you would have to manually make the changes the Visual Studio wizard is going to do for you in creating the app.
+- [Microsoft.Owin.Host.SystemWeb](https://www.nuget.org/packages/Microsoft.Owin.Host.SystemWeb/) to enable the [OWIN](http://owin.org/) interfaces in the ASP.NET application.
+- [Microsoft.Owin.Security.OpenIdConnect](https://www.nuget.org/packages/Microsoft.Owin.Security.OpenIdConnect/) for doing OpenID Connect authentication with Azure.
+- [Microsoft.Owin.Security.Cookies](https://www.nuget.org/packages/Microsoft.Owin.Security.Cookies/) to enable cookie-based authentication.
+- [Microsoft.Identity.Client](https://www.nuget.org/packages/Microsoft.Identity.Client/) for requesting and managing access tokens.
+- [Microsoft.Graph](https://www.nuget.org/packages/Microsoft.Graph/) for making calls to the Microsoft Graph.
 
-1. Update the projects application settings:
+Select **Tools > NuGet Package Manager > Package Manager Console**. In the Package Manager Console, enter the following commands.
 
-    1. Open the **web.config** file.
-    1. Add the following application settings to the `<appSettings>` XML element. You will update the `ida:AppId` & `ida:AppSecret` properties later. 
+```Powershell
+Update-Package bootstrap
+Install-Package Microsoft.Owin.Host.SystemWeb
+Install-Package Microsoft.Owin.Security.OpenIdConnect
+Install-Package Microsoft.Owin.Security.Cookies
+Install-Package Microsoft.Identity.Client -Pre
+Install-Package Microsoft.Graph
+```
 
-        Set the value of `ida:RedierctUri` to the value of the **SSL URL** you copied from a previous step.
+Create a basic OWIN startup class. Right-click the `graph-tutorial` folder in Solution Explorer and choose **Add > New Item**. Choose the **OWIN Startup Class** template, name the file `Startup.cs`, and choose **Add**.
 
-          ```xml
-          <add key="ida:AppId" value="ENTER_YOUR_APPLICATION_ID" />
-          <add key="ida:AppSecret" value="ENTER_YOUR_APPLICATION_SECRET" />
-          <add key="ida:RedirectUri" value="ENTER_YOUR_REDIRECT_URL" />
-          <add key="ida:GraphScopes" value="User.Read Calendars.Read" />
-          ```
+### Design the app
 
-1. Add the Microsoft Authentication Library (MSAL) and OWIN middleware packages to the web application:
+Start by creating a simple model for an error message. You'll use this model to flash error messages in the app's views.
 
-    1. In Visual Studio, select the menu item **View > Other Windows > Package Manager Console**.
-    1. In the **Package Manager Console** tool window, run the following commands to install the necessary packages for MSAL & the OWIN middleware:
+Right-click the **Models** folder in Solution Explorer and choose **Add > Class...**. Name the class `Alert` and choose **Add**. Add the following code in `Alert.cs`.
 
-        ```powershell
-        Install-Package Microsoft.Identity.Client -Pre
-        Install-Package Microsoft.IdentityModel.Tokens
-        Install-Package Microsoft.Owin
-        Install-Package Microsoft.Owin.Host.SystemWeb
-        Install-Package Microsoft.Owin.Security.Cookies
-        Install-Package Microsoft.Owin.Security.OpenIdConnect
-        Install-Package System.IdentityModel.Tokens.Jwt
-        ```
+```cs
+namespace graph_tutorial.Models
+{
+    public class Alert
+    {
+        public string Message { get; set; }
+        public string Debug { get; set; }
+    }
+}
+```
 
-1. Add authentication startup and configuration classes for MSAL & OWIN middleware:
+Now update the global layout of the app. Open the `./Views/Shared/_Layout.cshtml` file, and replace its entire contents with the following code.
 
-    1. Add two partial classes that will be executed when the OWIN middleware starts up when the application loads for the first time. These will configure the application to authenticate with Azure AD using specific application credentials and request permissions:
-        1. Copy the [LabFiles/Startup.cs](./LabFiles/Startup.cs) file to the root of the project.
-        1. Copy the [LabFiles/Startup.Auth.cs](./LabFiles/Startup.Auth.cs) file to the **App_Start** folder in the project.
-    1. Add a sample authentication provider to the project that will be used to obtain an OAuth2 access token from Azure AD:
-        1. Create a new folder **Helpers** in the root of the project and add the following files to it:
-            * [LabFiles/IAuthProvider.cs](./LabFiles/IAuthProvider.cs)
-            * [LabFiles/SampleAuthProvider.cs](./LabFiles/SampleAuthProvider.cs)
-    1. Create an OAuth2 token cache to store tokens obtained from Azure AD for a performance optimization. The application will first try to retrieve valid, unexpired tokens from the cache before making the round trip to Azure AD:
-        1. Create a new folder **TokenStorage** in the root of the project and add the following files to it:
-            * [LabFiles/SessionTokenCache.cs](./LabFiles/SessionTokenCache.cs)
+```html
+@{
+    var alerts = TempData.ContainsKey(graph_tutorial.Models.Alert.AlertKey) ?
+        (List<graph_tutorial.Models.Alert>)TempData[graph_tutorial.Models.Alert.AlertKey] :
+        new List<graph_tutorial.Models.Alert>();
+}
 
-1. Update the user interface of the web application support logging into the application
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASP.NET Graph Tutorial</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
 
-    1. Add an MVC controller that will handle the login and logout process for the application as well as a partial view that contains the login/logout controls.
-        1. Copy the [LabFiles/AccountController.cs](./LabFiles/AccountController.cs) file to the **Controllers** folder in the project.
-        1. Copy the [LabFiles/_LoginPartial.cshtml](./LabFiles/_LoginPartial.cshtml) file to the **Views/Shared** folder in the project.
-    1. Open the **Views\Shared\_Layout.cshtml** file.
-    1. Locate the part of the file that includes a few links at the top of the page. It looks similar to the following markup:
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+</head>
 
-        ```html
-        <ul class="nav navbar-nav">
-            <li>@Html.ActionLink("Home", "Index", "Home")</li>
-            <li>@Html.ActionLink("About", "About", "Home")</li>
-            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-        </ul>
-        ```
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container">
+            @Html.ActionLink("ASP.NET Graph Tutorial", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = ViewBag.Current == "Home" ? "nav-link active" : "nav-link" })
+                    </li>
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li class="nav-item" data-turbolinks="false">
+                            @Html.ActionLink("Calendar", "Index", "Calendar", new { area = "" }, new { @class = ViewBag.Current == "Calendar" ? "nav-link active" : "nav-link" })
+                        </li>
+                    }
+                </ul>
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://developer.microsoft.com/graph/docs/concepts/overview" target="_blank"><i class="fas fa-external-link-alt mr-1"></i>Docs</a>
+                    </li>
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                @if (!string.IsNullOrEmpty(ViewBag.User.Avatar))
+                                {
+                                    <img src="@ViewBag.User.Avatar" class="rounded-circle align-self-center mr-2" style="width: 32px;">
+                                }
+                                else
+                                {
+                                    <i class="far fa-user-circle fa-lg rounded-circle align-self-center mr-2" style="width: 32px;"></i>
+                                }
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <h5 class="dropdown-item-text mb-0">@ViewBag.User.DisplayName</h5>
+                                <p class="dropdown-item-text text-muted mb-0">@ViewBag.User.Email</p>
+                                <div class="dropdown-divider"></div>
+                                @Html.ActionLink("Sign Out", "SignOut", "Account", new { area = "" }, new { @class = "dropdown-item" })
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            @Html.ActionLink("Sign In", "SignIn", "Account", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main role="main" class="container">
+        @foreach (var alert in alerts)
+        {
+            <div class="alert alert-danger" role="alert">
+                <p class="mb-3">@alert.Message</p>
+                @if (!string.IsNullOrEmpty(alert.Debug))
+                {
+                    <pre class="alert-pre border bg-light p-2"><code>@alert.Debug</code></pre>
+                }
+            </div>
+        }
 
-    1. Add the following immediately after the closing `</ul>` tag
+        @RenderBody()
+    </main>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+```
 
-        ```html
-        @Html.Partial("_LoginPartial")
-        ```
+This code adds [Bootstrap](http://getbootstrap.com/) for simple styling, and [Font Awesome](https://fontawesome.com/) for some simple icons. It also defines a global layout with a nav bar, and uses the `Alert` class to display any alerts.
 
-<a name="exercise2"></a>
+Now open `Content/Site.css` and replace its entire contents with the following code.
 
-## Exercise 2: Register a New Azure AD Application
+```css
+body {
+  padding-top: 4.5rem;
+}
 
-In this exercise you will create a new Azure AD application using the Application Registry Portal (ARP).
+.alert-pre {
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+```
 
-1. Open a browser and navigate to the **Application Registry Portal**: **apps.dev.microsoft.com** and login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
+Now update the default page. Open the `Views/Home/index.cshtml` file and replace its contents with the following.
+
+```html
+@{
+    ViewBag.Current = "Home";
+}
+
+<div class="jumbotron">
+    <h1>ASP.NET Graph Tutorial</h1>
+    <p class="lead">This sample app shows how to use the Microsoft Graph API to access Outlook and OneDrive data from ASP.NET</p>
+    @if (Request.IsAuthenticated)
+    {
+        <h4>Welcome @ViewBag.User.DisplayName!</h4>
+        <p>Use the navigation bar at the top of the page to get started.</p>
+    }
+    else
+    {
+        @Html.ActionLink("Click here to sign in", "SignIn", "Account", new { area = "" }, new { @class = "btn btn-primary btn-large" })
+    }
+</div>
+```
+
+Now add a helper function to create an `Alert` and pass it to the view. In order to make it easily available to any controller we create, define a base controller class.
+
+Right-click the **Controllers** folder in Solution Explorer and choose **Add > Controller...**. Choose **MVC 5 Controller - Empty** and choose **Add**. Name the controller `BaseController` and choose **Add**. Replace the contents of `BaseController.cs` with the following code.
+
+```cs
+using graph_tutorial.Models;
+using System.Collections.Generic;
+using System.Web.Mvc;
+
+namespace graph_tutorial.Controllers
+{
+    public abstract class BaseController : Controller
+    {
+        protected void Flash(string message, string debug=null)
+        {
+            var alerts = TempData.ContainsKey(Alert.AlertKey) ?
+                (List<Alert>)TempData[Alert.AlertKey] :
+                new List<Alert>();
+
+            alerts.Add(new Alert
+            {
+                Message = message,
+                Debug = debug
+            });
+
+            TempData[Alert.AlertKey] = alerts;
+        }
+    }
+}
+```
+
+Any controller can inherit from this base controller class to gain access to the `Flash` function. Update the `HomeController` class to inherit from `BaseController`. Open `Controllers/HomeController.cs` and change the `public class HomeController : Controller` line to:
+
+```cs
+public class HomeController : BaseController
+```
+
+Save all of your changes and restart the server. Now, the app should look very different.
+
+![A screenshot of the redesigned home page](/Images/create-app-01.png)
+
+## Exercise 2: Register a web application with the Application Registration Portal
+
+In this exercise, you will create a new Azure AD web application registration using the Application Registry Portal (ARP).
+
+1. Open a browser and navigate to the [Application Registration Portal](https://apps.dev.microsoft.com). Login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
+
 1. Select **Add an app** at the top of the page.
-1. On the **Register your application** page, set the **Application Name** to **MSGraphCalendarViewer** and select **Create**.
-1. On the **MSGraphCalendarViewer Registration** page, under the **Properties** section, copy the **Application Id** Guid as you will need it later.
 
-    ![Screenshot of newly created application's ID](./Images/arp-add-properties-01.png)
+    > **Note:** If you see more than one **Add an app** button on the page, select the one that corresponds to the **Converged apps** list.
 
-1. In the **Application Secrets** section, select **Generate New Password**.
+1. On the **Register your application** page, set the **Application Name** to **ASP.NET Graph Tutorial** and select **Create**.
 
-    1. Copy the password from the **New password generated** dialog.
+    ![Screenshot of creating a new app in the App Registration Portal website](../../Images/arp-create-app-01.png)
 
-        > Note: You must copy this password now as it will never be shown again. You can create additional passwords at a later date, but you must copy them when created for use within an application.
+1. On the **ASP.NET Graph Tutorial Registration** page, under the **Properties** section, copy the **Application Id** as you will need it later.
 
-1. In the **Platforms** section, select **Add Platform**.
+    ![Screenshot of newly created application's ID](../../Images/arp-create-app-02.png)
 
+1. Scroll down to the **Application Secrets** section.
+
+    1. Select **Generate New Password**.
+    1. In the **New password generated** dialog, copy the contents of the box as you will need it later.
+
+        > **Important:** This password is never shown again, so make sure you copy it now.
+
+    ![Screenshot of newly created application's password](../../Images/arp-create-app-03.png)
+
+1. Determine your ASP.NET app's URL. In Visual Studio's Solution Explorer, select the **graph-tutorial** project. In the **Properties** window, find the value of **URL**. Copy this value.
+
+    ![Screenshot of the Visual Studio Properties window](../../Images/vs-project-url.png)
+
+1. Scroll down to the **Platforms** section.
+
+    1. Select **Add Platform**.
     1. In the **Add Platform** dialog, select **Web**.
-    1. In the **Web** platform box added by the previous dialog's selection, enter the SSL URL from the web application created in the previous exercise for the **Redirect URLs**
 
-        ![Screenshot of the newly added Web platform for the application](./Images/arp-add-platform-01.png)
+        ![Screenshot creating a platform for the app](../../Images/arp-create-app-04.png)
 
-1. In the **Microsoft Graph Permissions** section, select **Add** next to the **Delegated Permissions** subsection.
+    1. In the **Web** platform box, enter the URL you copied from the Visual Studio project's properties for the **Redirect URLs**.
 
-    ![Screenshot of the Add button for adding a delegated permission](./Images/arp-add-permission-01.png)
-
-    In the **Select Permission** dialog, locate and select the permission **Calendars.Read** and select **OK**:
-
-      ![Screenshot of adding the Calendars.Read permission](./Images/arp-add-permission-02.png)
-
-      ![Screenshot of the newly added Calendars.Read permission](./Images/arp-add-permission-03.png)
+        ![Screenshot of the newly added Web platform for the application](../../Images/arp-create-app-05.png)
 
 1. Scroll to the bottom of the page and select **Save**.
-1. Go back to the ASP.NET MVC application in Visual Studio and open the **web.config** file.
 
-    Update the `ida:AppId` app setting to the application ID of the application created in this exercise.
+## Exercise 3: Extend the app for Azure AD Authentication
 
-    Update the `ida:AppSecret` app setting to the application secret of the application created in this exercise.
+In this exercise you will extend the application from the previous exercise to support authentication with Azure AD. This is required to obtain the necessary OAuth access token to call the Microsoft Graph. In this step you will integrate the OWIN middleware and the [Microsoft Authentication Library](https://www.nuget.org/packages/Microsoft.Identity.Client/) library into the application.
 
-<a name="exercise3"></a>
+Right-click the **graph-tutorial** project in Solution Explorer and choose **Add > New Item...**. Choose **Web Configuration File**, name the file `PrivateSettings.config` and choose **Add**. Replace its entire contents with the following code.
 
-## Exercise 3: Update the ASP.NET MVC Application to Leverage the Microsoft Graph .NET SDK
+```xml
+<appSettings>
+    <add key="ida:AppID" value="YOUR APP ID" />
+    <add key="ida:AppSecret" value="YOUR APP PASSWORD" />
+    <add key="ida:RedirectUri" value="http://localhost:64107/" />
+    <add key="ida:AppScopes" value="openid email profile offline_access     User.Read Calendars.Read" />
+</appSettings>
+```
 
-In this exercise you will add a controller and views that utilize the Microsoft Graph .NET SDK to show the user's calendar.
+Replace `YOUR APP ID HERE` with the application ID from the Application Registration Portal, and replace `YOUR APP SECRET HERE` with the password you generated. Also be sure to modify the value for the `ida:RedirectUri` to match your application's URL.
 
-1. Add the Microsoft Graph .NET SDK via NuGet.
+> **Important:** If you're using source control such as git, now would be a good time to exclude the `PrivateSettings.config` file from source control to avoid inadvertently leaking your app ID and password.
 
-    1. In Visual Studio, select the menu item **View > Other Windows > Package Manager Console**.
-    1. In the **Package Manager Console** tool window, run the following command to install the Microsoft Graph .NET SDK:
+Update `Web.config` to load this new file. Replace the `<appSettings>` line with the following
 
-        ```powershell
-        Install-Package Microsoft.Graph
-        ```
+```xml
+<appSettings file="PrivateSettings.config">
+```
 
-1. Create a model class to store the event information obtained from the Microsoft Graph API:
+### Implement sign-in
 
-    1. In the **Visual Studio** **Solution Explorer** tool window, right-click the **Models** folder and select **Add > Class**.
-    1. In the **Add Class** dialog, name the class **MyEvent** and select **Add**.
-    1. Add the following `using` statements to the existing ones in the **MyEvents.cs** file that was created.
+Start by initializing the OWIN middleware to use Azure AD authentication for the app. Right-click the **App_Start** folder in Solution Explorer and choose **Add > Class...**. Name the file `Startup.Auth.cs` and choose **Add**. Replace the entire contents with the following code.
 
-        ```cs
-        using System.ComponentModel;
-        using System.ComponentModel.DataAnnotations;
-        ```
+```cs
+using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.Notifications;
+using Microsoft.Owin.Security.OpenIdConnect;
+using Owin;
+using System.Configuration;
+using System.Threading.Tasks;
 
-    1. Add the following code to the `MyEvent` class defining three new members:
+namespace graph_tutorial
+{
+    public partial class Startup
+    {
+        // Load configuration settings from PrivateSettings.config
+        private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
+        private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
+        private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
+        private static string graphScopes = ConfigurationManager.AppSettings["ida:AppScopes"];
 
-        ```cs
-        [DisplayName("Subject")]
-        public string Subject { get; set; }
-
-        [DisplayName("Start Time")]
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTimeOffset? Start { get; set; }
-
-        [DisplayName("End Time")]
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTimeOffset? End { get; set; }
-        ```
-
-1. Update the authentication provider by adding methods that will return the Microsoft Graph SDK client object:
-
-    1. Open the **Helpers/SampleAuthProvider.cs** file.
-    1. Add the following `using` statements to the top of the file:
-
-        ```cs
-        using System.Net.Http.Headers;
-        using Microsoft.Graph;
-        ```
-
-    1. Add the following members to the `SampleAuthProvider` class to return the object and handle signing out:
-
-        ```cs
-        private static GraphServiceClient graphClient = null;
-
-        public static GraphServiceClient GetAuthenticatedClient()
+        public void ConfigureAuth(IAppBuilder app)
         {
-          GraphServiceClient graphClient = new GraphServiceClient(
-            new DelegateAuthenticationProvider(
-              async (requestMessage) =>
+            app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
+
+            app.UseCookieAuthentication(new CookieAuthenticationOptions());
+
+            app.UseOpenIdConnectAuthentication(
+              new OpenIdConnectAuthenticationOptions
               {
-                string accessToken = await SampleAuthProvider.Instance.GetUserAccessTokenAsync();
-                requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
-              }));
-          return graphClient;
-        }
+                  ClientId = appId,
+                  Authority = "https://login.microsoftonline.com/common/v2.0",
+                  Scope = $"openid email profile offline_access {graphScopes}",
+                  RedirectUri = redirectUri,
+                  PostLogoutRedirectUri = redirectUri,
+                  TokenValidationParameters = new TokenValidationParameters
+                  {
+                      // For demo purposes only, see below
+                      ValidateIssuer = false
 
-        public static void SignOutClient()
-        {
-          graphClient = null;
-        }
-        ```
-
-1. Update the application to handle Microsoft Graph specific exceptions and signing out of the application:
-
-    1. Open the **Helpers/SampleAuthProvider.cs** file.
-    1. Locate the `try-catch` statement at the end of the `GetUserAccessTokenAsync()` method. Replace the following line that throws a generic exception...
-
-        ```cs
-        throw new Exception ();
-        ```
-
-        With the following code to throw a Microsoft Graph specific exception:
-
-        ```cs
-        throw new ServiceException(
-          new Error
-          {
-            Code = GraphErrorCode.AuthenticationFailure.ToString(),
-            Message = Resource.Error_AuthChallengeNeeded,
-          });
-        ```
-
-    1. Open the **Controllers/AccountController.cs** file.
-    1. Add the following `using` statements to the top of the file:
-
-        ```cs
-        using System.Net.Http.Headers;
-        using Microsoft.Graph;
-        ```
-
-    1. Locate the `SignoOut()` method. Add the following statement immediately before the `Response.Redirect("/");` line:
-
-      ```cs
-      SampleAuthProvider.SignOutClient();
-      ```
-
-1. Add a new ASP.NET MVC controller that will retrieve events from the user's calendar:
-
-    1. In the **Visual Studio** **Solution Explorer** tool window, right-click the **Controllers** folder and select **Add > Controller**.
-    1. In the **Add Scaffold** dialog, select **MVC 5 Controller - Empty**, select **Add** and name the controller **CalendarController** and then select **Add**.
-    1. Add the following `using` statements to the existing ones in the **CalendarController.cs** file that was created.
-
-        ```cs
-        using Microsoft.Graph;
-        using MSGraphCalendarViewer.Helpers;
-        using MSGraphCalendarViewer.Models;
-        using System.Net.Http.Headers;
-        using System.Security.Claims;
-        using System.Threading.Tasks;
-        ```
-
-    1. Decorate the controller to allow only authenticated users to use it by adding `[Authorize]` in the line immediately before the controller:
-
-        ```cs
-        [Authorize]
-        public class CalendarController : Controller
-        ```
-
-    1. Modify the existing `Index()` method to be asynchronous by adding the `async` keyword and modifying the return type to be as follows:
-
-        ```cs
-        public async Task<ActionResult> Index()
-        ```
-
-    1. Update the `Index()` method to use the `GraphServiceClient` object to call the Microsoft Graph API and retrieve the first 20 events in the user's calendar:
-
-        ```cs
-        public async Task<ActionResult> Index()
-        {
-          var eventsResults = new List<MyEvent>();
-
-          try
-          {
-            var graphService = SampleAuthProvider.GetAuthenticatedClient();
-            var request = graphService.Me.Events.Request(new Option[] { new QueryOption("top", "20"), new QueryOption("skip", "0") });
-            var userEventsCollectionPage = await request.GetAsync();
-            foreach (var evnt in userEventsCollectionPage)
-            {
-              eventsResults.Add(new MyEvent
-              {
-                Subject = !string.IsNullOrEmpty(evnt.Subject) ? evnt.Subject : string.Empty,
-                Start = !string.IsNullOrEmpty(evnt.Start.DateTime) ? DateTime.Parse(evnt.Start.DateTime) : new DateTime(),
-                End = !string.IsNullOrEmpty(evnt.End.DateTime) ? DateTime.Parse(evnt.End.DateTime) : new DateTime()
-
-              });
-            }
-          }
-          catch (Exception el)
-          {
-            el.ToString();
-          }
-
-          ViewBag.Events = eventsResults.OrderBy(c => c.Start);
-
-          return View();
-        }
-        ```
-
-1. Implement the Calendar controller's associated ASP.NET MVC view:
-
-    1. In the `CalendarController` class method `Index()`, locate the `View()` return statement at the end of the method. Right-click `View()` in the code and select **Add View**:
-
-        ![Screenshot adding a view using the context menu in the code.](./Images/vs-calendarController-01.png)
-
-    1. In the **Add View** dialog, set the following values (*leave all other values as their default values*) and select **Add**:
-
-        * **View name:** Index
-        * **Template:** Empty (without model)
-
-    1. In the newly created **Views/Calendar/Index.cshtml** file, replace the default code with the following code:
-
-        ```html
-        @{
-          ViewBag.Title = "Home Page";
-        }
-        <div>
-          <table>
-            <thead>
-              <tr>
-                <th>Subject</th>
-                <th>Start</th>
-                <th>End</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach (var o365Event in ViewBag.Events)
-              {
-                <tr>
-                  <td>@o365Event.Subject</td>
-                  <td>@o365Event.Start</td>
-                  <td>@o365Event.End</td>
-                </tr>
+                      // In a real multi-tenant app, you would add logic to determine whether the
+                      // issuer was from an authorized tenant
+                      //ValidateIssuer = true,
+                      //IssuerValidator = (issuer, token, tvp) =>
+                      //{
+                      //  if (MyCustomTenantValidation(issuer))
+                      //  {
+                      //    return issuer;
+                      //  }
+                      //  else
+                      //  {
+                      //    throw new SecurityTokenInvalidIssuerException("Invalid issuer");
+                      //  }
+                      //}
+                  },
+                  Notifications = new OpenIdConnectAuthenticationNotifications
+                  {
+                      AuthenticationFailed = OnAuthenticationFailedAsync,
+                      AuthorizationCodeReceived = OnAuthorizationCodeReceivedAsync
+                  }
               }
-            </tbody>
-          </table>
-        </div>
-        ```
+            );
+        }
 
-    1. Update the navigation in the **Views/Shared/_Layout.cshtml** file to include a fourth link pointing to a new controller *Calendar*:
+        private static Task OnAuthenticationFailedAsync(AuthenticationFailedNotification<OpenIdConnectMessage,
+          OpenIdConnectAuthenticationOptions> notification)
+        {
+            notification.HandleResponse();
+            string redirect = $"/Home/Error?message={notification.Exception.Message}";
+            if (notification.ProtocolMessage != null && !string.IsNullOrEmpty(notification.ProtocolMessage.ErrorDescription))
+            {
+                redirect += $"&debug={notification.ProtocolMessage.ErrorDescription}";
+            }
+            notification.Response.Redirect(redirect);
+            return Task.FromResult(0);
+        }
 
-        ```html
-        <ul class="nav navbar-nav">
-          <li>@Html.ActionLink("Home", "Index", "Home")</li>
-          <li>@Html.ActionLink("About", "About", "Home")</li>
-          <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-          <li>@Html.ActionLink("Calendar", "Index", "Calendar")</li>
-        </ul>
-        ```
+        private async Task OnAuthorizationCodeReceivedAsync(AuthorizationCodeReceivedNotification notification)
+        {
+            var idClient = new ConfidentialClientApplication(
+                appId, redirectUri, new ClientCredential(appSecret), null, null);
 
-1. Save your changes to all files.
+            string message;
+            string debug;
 
-Test the application:
+            try
+            {
+                string[] scopes = graphScopes.Split(' ');
 
-1. Press **F5** to start the application.
-1. When the browser loads, select **Signin with Microsoft** and login.
-1. If this is the first time running the application, you will be prompted to consent to the application. Review the consent dialog and select **Accept**. The dialog will look similar to the following dialog:
+                var result = await idClient.AcquireTokenByAuthorizationCodeAsync(
+                    notification.Code, scopes);
 
-    ![Screesnhot of Azure AD consent dialog](./Images/aad-consent.png)
+                message = "Access token retrieved.";
+                debug = result.AccessToken;
+            }
+            catch (MsalException ex)
+            {
+                message = "AcquireTokenByAuthorizationCodeAsync threw an exception";
+                debug = ex.Message;
+            }
 
-1. When the ASP.NET application loads, select the **Calendar** link in the top navigation.
-1. You should see a list of calendar items from your calendar appear on the page.
+            notification.HandleResponse();
+            notification.Response.Redirect($"/Home/Error?message={message}&debug={debug}");
+        }
+    }
+}
+```
 
-    ![Screesnhot of the web application showing calendar events](./Images/calendar-events-01.png)
+This code configures the OWIN middleware with the values from `PrivateSettings.config` and defines two callback methods, `OnAuthenticationFailedAsync` and `OnAuthorizationCodeReceivedAsync`. These callback methods will be invoked when the sign-in process returns from Azure.
+
+Now update the `Startup.cs` file to call the `ConfigureAuth` method. Replace the entire contents of `Startup.cs` with the following code.
+
+```cs
+using Microsoft.Owin;
+using Owin;
+
+[assembly: OwinStartup(typeof(graph_tutorial.Startup))]
+
+namespace graph_tutorial
+{
+    public partial class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+            ConfigureAuth(app);
+        }
+    }
+}
+```
+
+Add an `Error` action to the `HomeController` class to transform the `message` and `debug` query parameters into an `Alert` object. Open `Controllers/HomeController.cs` and add the following function.
+
+```cs
+public ActionResult Error(string message, string debug)
+{
+    Flash(message, debug);
+    return RedirectToAction("Index");
+}
+```
+
+Add a controller to handle sign-in. Right-click the **Controllers** folder in Solution Explorer and choose **Add > Controller...**. Choose **MVC 5 Controller - Empty** and choose **Add**. Name the controller `AccountController` and choose **Add**. Replace the entire contents of the file with the following code.
+
+```cs
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.OpenIdConnect;
+using System.Web;
+
+namespace graph_tutorial.Controllers
+{
+    public class AccountController : BaseController
+    {
+        public void SignIn()
+        {
+            if (!Request.IsAuthenticated)
+            {
+                // Signal OWIN to send an authorization request to Azure
+                Request.GetOwinContext().Authentication.Challenge(
+                    new AuthenticationProperties { RedirectUri = "/" },
+                    OpenIdConnectAuthenticationDefaults.AuthenticationType);
+            }
+        }
+    }
+}
+```
+
+This defines a single action, `SignIn`. This action checks if the request is already authenticated. If not, it invokes the OWIN middleware to authenticate the user.
+
+Save your changes and start the project. Click the sign-in button and you should be redirected to `https://login.microsoftonline.com`. Login with your Microsoft account and consent to the requested permissions. The browser redirects to the app, showing the token.
+
+#### Get user details
+
+Start by creating a new file to hold all of your Microsoft Graph calls. Right-click the **graph-tutorial** folder in Solution Explorer, and choose **Add > New Folder**. Name the folder `Helpers`. Right click this new folder and choose **Add > Class...**. Name the file `GraphHelper.cs` and choose **Add**. Replace the contents of this file with the following code.
+
+```cs
+using Microsoft.Graph;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+
+namespace graph_tutorial.Helpers
+{
+    public static class GraphHelper
+    {
+        public static async Task<User> GetUserDetailsAsync(string accessToken)
+        {
+            var graphClient = new GraphServiceClient(
+                new DelegateAuthenticationProvider(
+                    async (requestMessage) =>
+                    {
+                        requestMessage.Headers.Authorization =
+                            new AuthenticationHeaderValue("Bearer", accessToken);
+                    }));
+
+            return await graphClient.Me.Request().GetAsync();
+        }
+    }
+}
+```
+
+This implements the `GetUserDetails` function, which uses the Microsoft Graph SDK to call the `/me` endpoint and return the result.
+
+Update the `OnAuthorizationCodeReceivedAsync` method in `App_Start/Startup.Auth.cs` to call this function. First, add the following `using` statement to the top of the file.
+
+```cs
+using graph_tutorial.Helpers;
+```
+
+Replace the existing `try` block in `OnAuthorizationCodeReceivedAsync` with the following code.
+
+```cs
+try
+{
+    string[] scopes = graphScopes.Split(' ');
+
+    var result = await idClient.AcquireTokenByAuthorizationCodeAsync(
+        notification.Code, scopes);
+
+    var userDetails = await GraphHelper.GetUserDetailsAsync(result.AccessToken);
+
+    string email = string.IsNullOrEmpty(userDetails.Mail) ?
+        userDetails.UserPrincipalName : userDetails.Mail;
+
+    message = "User info retrieved.";
+    debug = $"User: {userDetails.DisplayName}, Email: {email}";
+}
+```
+
+Now if you save your changes and start the app, after sign-in you should see the user's name and email address instead of the access token.
+
+### Storing the tokens
+
+Now that you can get tokens, it's time to implement a way to store them in the app. Since this is a sample app, we'll use the session to store the tokens. A real-world app would use a more reliable secure storage solution, like a database.
+
+Right-click the **graph-tutorial** folder in Solution Explorer, and choose **Add > New Folder**. Name the folder `TokenStorage`. Right click this new folder and choose **Add > Class...**. Name the file `SessionTokenStore.cs` and choose **Add**. Replace the contents of this file with the following code.
+
+```cs
+using Microsoft.Identity.Client;
+using Newtonsoft.Json;
+using System.Threading;
+using System.Web;
+
+namespace graph_tutorial.TokenStorage
+{
+    // Simple class to serialize into the session
+    public class CachedUser
+    {
+        public string DisplayName { get; set; }
+        public string Email { get; set; }
+        public string Avatar { get; set; }
+    }
+
+    // Adapted from https://github.com/Azure-Samples/active-directory-dotnet-webapp-openidconnect-v2
+    public class SessionTokenStore
+    {
+        private static ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        private readonly string userId = string.Empty;
+        private readonly string cacheId = string.Empty;
+        private readonly string cachedUserId = string.Empty;
+        private HttpContextBase httpContext = null;
+
+        TokenCache tokenCache = new TokenCache();
+
+        public SessionTokenStore(string userId, HttpContextBase httpContext)
+        {
+            this.userId = userId;
+            cacheId = $"{userId}_TokenCache";
+            cachedUserId = $"{userId}_UserCache";
+            this.httpContext = httpContext;
+            Load();
+        }
+
+        public TokenCache GetMsalCacheInstance()
+        {
+            tokenCache.SetBeforeAccess(BeforeAccessNotification);
+            tokenCache.SetAfterAccess(AfterAccessNotification);
+            Load();
+            return tokenCache;
+        }
+
+        public bool HasData()
+        {
+            return (httpContext.Session[cacheId] != null && ((byte[])httpContext.Session[cacheId]).Length > 0);
+        }
+
+        public void Clear()
+        {
+            httpContext.Session.Remove(cacheId);
+        }
+
+        private void Load()
+        {
+            sessionLock.EnterReadLock();
+            tokenCache.Deserialize((byte[])httpContext.Session[cacheId]);
+            sessionLock.ExitReadLock();
+        }
+
+        private void Persist()
+        {
+            sessionLock.EnterReadLock();
+
+            // Optimistically set HasStateChanged to false.
+            // We need to do it early to avoid losing changes made by a concurrent thread.
+            tokenCache.HasStateChanged = false;
+
+            httpContext.Session[cacheId] = tokenCache.Serialize();
+            sessionLock.ExitReadLock();
+        }
+
+        // Triggered right before MSAL needs to access the cache.
+        private void BeforeAccessNotification(TokenCacheNotificationArgs args)
+        {
+            // Reload the cache from the persistent store in case it changed since the last access.
+            Load();
+        }
+
+        // Triggered right after MSAL accessed the cache.
+        private void AfterAccessNotification(TokenCacheNotificationArgs args)
+        {
+            // if the access operation resulted in a cache update
+            if (tokenCache.HasStateChanged)
+            {
+                Persist();
+            }
+        }
+
+        public void SaveUserDetails(CachedUser user)
+        {
+            sessionLock.EnterReadLock();
+            httpContext.Session[cachedUserId] = JsonConvert.SerializeObject(user);
+            sessionLock.ExitReadLock();
+        }
+
+        public CachedUser GetUserDetails()
+        {
+            sessionLock.EnterReadLock();
+            var cachedUser = JsonConvert.DeserializeObject<CachedUser>((string)httpContext.Session[cachedUserId]);
+            sessionLock.ExitReadLock();
+            return cachedUser;
+        }
+    }
+}
+```
+
+This code creates a `SessionTokenStore` class that works with the MSAL library's `TokenCache` class. Most of the code here involves serializing and deserializing the `TokenCache` to the session. It also provides a class and methods to serialize and deserialize the user's details to the session.
+
+Now update the `OnAuthorizationCodeReceivedAsync` function to create an instance of the `SessionTokenStore` class and provide that to the constructor for the `ConfidentialClientApplication` object. That will cause MSAL to use your cache implementation for storing tokens. Replace the existing `OnAuthorizationCodeReceivedAsync` function with the following.
+
+```js
+private async Task OnAuthorizationCodeReceivedAsync(AuthorizationCodeReceivedNotification notification)
+{
+    // Get the signed in user's id and create a token cache
+    string signedInUserId = notification.AuthenticationTicket.Identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+    SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId,
+        notification.OwinContext.Environment["System.Web.HttpContextBase"] as HttpContextBase);
+
+    var idClient = new ConfidentialClientApplication(
+        appId, redirectUri, new ClientCredential(appSecret), tokenStore.GetMsalCacheInstance(), null);
+
+    try
+    {
+        string[] scopes = graphScopes.Split(' ');
+
+        var result = await idClient.AcquireTokenByAuthorizationCodeAsync(
+            notification.Code, scopes);
+
+        var userDetails = await GraphHelper.GetUserDetailsAsync(result.AccessToken);
+
+        var cachedUser = new CachedUser()
+        {
+            DisplayName = userDetails.DisplayName,
+            Email = string.IsNullOrEmpty(userDetails.Mail) ?
+            userDetails.UserPrincipalName : userDetails.Mail,
+            Avatar = string.Empty
+        };
+
+        tokenStore.SaveUserDetails(cachedUser);
+    }
+    catch (MsalException ex)
+    {
+        string message = "AcquireTokenByAuthorizationCodeAsync threw an exception";
+        notification.HandleResponse();
+        notification.Response.Redirect($"/Home/Error?message={message}&debug={ex.Message}");
+    }
+    catch(Microsoft.Graph.ServiceException ex)
+    {
+        string message = "GetUserDetailsAsync threw an exception";
+        notification.HandleResponse();
+        notification.Response.Redirect($"/Home/Error?message={message}&debug={ex.Message}");
+    }
+}
+```
+
+To summarize the changes:
+
+- The code now passes a `TokenCache` object to the constructor for `ConfidentialClientApplication`. The MSAL library will handle the logic of storing the tokens and refreshing it when needed.
+- The code now passes the user details obtained from Microsoft Graph to the `SessionTokenStore` object to store in the session.
+- On success, the code no longer redirects, it just returns. This allows the OWIN middleware to complete the authentication process.
+
+The cached user details are something that every view in the application will need, so update the `BaseController` class to load this information from the session. Open `Controllers/BaseController.cs` and add the following `using` statements to the top of the file.
+
+```cs
+using graph_tutorial.TokenStorage;
+using System.Security.Claims;
+using System.Web;
+```
+
+Then add the following function.
+
+```cs
+protected override void OnActionExecuting(ActionExecutingContext filterContext)
+{
+    if (Request.IsAuthenticated)
+    {
+        // Get the signed in user's id and create a token cache
+        string signedInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
+        SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId, HttpContext);
+
+        if (tokenStore.HasData())
+        {
+            // Add the user to the view bag
+            ViewBag.User = tokenStore.GetUserDetails();
+        }
+        else
+        {
+            // The session has lost data. This happens often
+            // when debugging. Log out so the user can log back in
+            Request.GetOwinContext().Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+            filterContext.Result = RedirectToAction("Index", "Home");
+        }
+    }
+
+    base.OnActionExecuting(filterContext);
+}
+```
+
+Restart the server and go through the sign-in process. You should end up back on the home page, but the UI should change to indicate that you are signed-in.
+
+![A screenshot of the home page after signing in](/Images/add-aad-auth-01.png)
+
+Click the user avatar in the top right corner to access the **Sign Out** link. Clicking **Sign Out** resets the session and returns you to the home page.
+
+![A screenshot of the dropdown menu with the Sign Out link](/Images/add-aad-auth-02.png)
+
+### Refreshing tokens
+
+At this point your application has an access token, which is sent in the `Authorization` header of API calls. This is the token that allows the app to access the Microsoft Graph on the user's behalf.
+
+However, this token is short-lived. The token expires an hour after it is issued. This is where the refresh token becomes useful. The refresh token allows the app to request a new access token without requiring the user to sign in again.
+
+Because the app is using the MSAL library and a `TokenCache` object, you do not have to implement any token refresh logic. The `ConfidentialClientApplication.AcquireTokenSilentAsync` method does all of the logic for you. It first checks the cached token, and if it is not expired, it returns it. If it is expired, it uses the cached refresh token to obtain a new one. You'll use this method in the following module.
+
+## Exercise 4: Extend the app for Microsoft Graph
+
+In this exercise you will incorporate the Microsoft Graph into the application. For this application, you will use the [Microsoft Graph Client Library for .NET](https://github.com/microsoftgraph/msgraph-sdk-dotnet) to make calls to Microsoft Graph.
+
+### Get calendar events from Outlook
+
+Start by extending the `GraphHelper` class you created in the last module. First, add the following `using` statements to the top of the `Helpers/GraphHelper.cs` file.
+
+```cs
+using graph_tutorial.TokenStorage;
+using Microsoft.Identity.Client;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Security.Claims;
+using System.Web;
+```
+
+Then add the following code to the `GraphHelper` class.
+
+```cs
+// Load configuration settings from PrivateSettings.config
+private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
+private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
+private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
+private static string graphScopes = ConfigurationManager.AppSettings["ida:AppScopes"];
+
+public static async Task<IEnumerable<Event>> GetEventsAsync()
+{
+    var graphClient = GetAuthenticatedClient();
+
+    var events = await graphClient.Me.Events.Request()
+        .Select("subject,organizer,start,end")
+        .OrderBy("createdDateTime DESC")
+        .GetAsync();
+
+    return events.CurrentPage;
+}
+
+private static GraphServiceClient GetAuthenticatedClient()
+{
+    return new GraphServiceClient(
+        new DelegateAuthenticationProvider(
+            async (requestMessage) =>
+            {
+                // Get the signed in user's id and create a token cache
+                string signedInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
+                SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId,
+                    new HttpContextWrapper(HttpContext.Current));
+
+                var idClient = new ConfidentialClientApplication(
+                    appId, redirectUri, new ClientCredential(appSecret),
+                    tokenStore.GetMsalCacheInstance(), null);
+
+                // By calling this here, the token can be refreshed
+                // if it's expired right before the Graph call is made
+                var result = await idClient.AcquireTokenSilentAsync(
+                    graphScopes.Split(' '), idClient.Users.First());
+
+                requestMessage.Headers.Authorization =
+                    new AuthenticationHeaderValue("Bearer", result.AccessToken);
+            }));
+}
+```
+
+Consider what this code is doing.
+
+- The `GetAuthenticatedClient` function initializes a `GraphServiceClient` with an authentication provider that calls `AcquireTokenSilentAsync`.
+- In the `GetEventsAsync` function:
+  - The URL that will be called is `/v1.0/me/events`.
+  - The `Select` function limits the fields returned for each events to just those the view will actually use.
+  - The `OrderBy` function sorts the results by the date and time they were created, with the most recent item being first.
+
+Now create a controller for the calendar views. Right-click the **Controllers** folder in Solution Explorer and choose **Add > Controller...**. Choose **MVC 5 Controller - Empty** and choose **Add**. Name the controller `CalendarController` and choose **Add**. Replace the entire contents of the new file with the following code.
+
+```cs
+using graph_tutorial.Helpers;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+
+namespace graph_tutorial.Controllers
+{
+    public class CalendarController : BaseController
+    {
+        // GET: Calendar
+        [Authorize]
+        public async Task<ActionResult> Index()
+        {
+            var events = await GraphHelper.GetEventsAsync();
+            return Json(events, JsonRequestBehavior.AllowGet);
+        }
+    }
+}
+```
+
+Now you can test this. Start the app, sign in, and click the **Calendar** link in the nav bar. If everything works, you should see a JSON dump of events on the user's calendar.
+
+### Display the results
+
+Now you can add a view to display the results in a more user-friendly manner. In Solution Explorer, right-click the **Views/Calendar** folder and choose **Add > View...**. Name the view `Index` and choose **Add**. Replace the entire contents of the new file with the following code.
+
+```html
+@model IEnumerable<Microsoft.Graph.Event>
+
+@{
+    ViewBag.Current = "Calendar";
+}
+
+<h1>Calendar</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Organizer</th>
+            <th scope="col">Subject</th>
+            <th scope="col">Start</th>
+            <th scope="col">End</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Organizer.EmailAddress.Name</td>
+                <td>@item.Subject</td>
+                <td>@Convert.ToDateTime(item.Start.DateTime).ToString("M/d/yy h:mm tt")</td>
+                <td>@Convert.ToDateTime(item.End.DateTime).ToString("M/d/yy h:mm tt")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+```
+
+That will loop through a collection of events and add a table row for each one. Remove the `return Json(events, JsonRequestBehavior.AllowGet);` line from the `Index` function in `Controllers/CalendarController.cs`, and replace it with the following code.
+
+```cs
+return View(events);
+```
+
+Start the app, sign in, and click the **Calendar** link. The app should now render a table of events.
+
+![A screenshot of the table of events](/Images/add-msgraph-01.png)
