@@ -27,19 +27,21 @@ This module has been recorded and is available in the Office Development YouTube
 
 ## Contributors
 
-|        Roles         |                        Author(s)                        |
-| -------------------- | ------------------------------------------------------- |
-| Lab Manuals / Slides | Andrew Connell (Microsoft MVP, Voitanos) @andrewconnell |
-| Sponsor / Support    | Yina Arenas (Microsoft) @yinaa                          |
+|        Roles         |                            Author(s)                             |
+| -------------------- | ---------------------------------------------------------------- |
+| Lab Manuals / Slides | Andrew Connell (Microsoft MVP, Voitanos) @andrewconnell          |
+| QA                   | Julie Turner (Microsoft MVP, Sympraxis Consulting) @juliemturner |
+| Sponsor / Support    | Yina Arenas (Microsoft) @yinaa                                   |
 
 ## Version history
 
-| Version |        Date        |                    Comments                    |
-| ------- | ------------------ | ---------------------------------------------- |
+| Version |        Date        |                       Comments                       |
+| ------- | ------------------ | ---------------------------------------------------- |
+| 1.3     | September 12, 2018 | 2018Q4 content refresh                               |
 | 1.3     | August 24, 2018    | Revised modules for consistency with other training. |
-| 1.2     | June 28, 2018      | Added screencast.                              |
-| 1.1     | June 04, 2018      | Rewritten to use latest guidance.              |
-| 1.0     | ~November 24, 2017 | Add Microsoft Graph related product breakouts. |
+| 1.2     | June 28, 2018      | Added screencast.                                    |
+| 1.1     | June 04, 2018      | Rewritten to use latest guidance.                    |
+| 1.0     | ~November 24, 2017 | Add Microsoft Graph related product breakouts.       |
 
 ## Disclaimer
 
