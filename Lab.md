@@ -5,9 +5,9 @@ In this lab you will create an ASP.NET MVC application, configured with Azure Ac
 ## In this lab
 
 - [Exercise 1: Create an ASP.NET MVC Web Application](#exercise-1-create-an-aspnet-mvc-web-application)
-- [Register a web application with the Application Registration Portal](#exercise-2-register-a-web-application-with-the-application-registration-portal)
-- [Extend the app for Azure AD Authentication](#exercise-3-extend-the-app-for-azure-ad-authentication)
-- [Extend the app for Microsoft Graph](#exercise-4-extend-the-app-for-microsoft-graph)
+- [Exercise 2: Register a web application with the Application Registration Portal](#exercise-2-register-a-web-application-with-the-application-registration-portal)
+- [Exercise 3: Extend the app for Azure AD Authentication](#exercise-3-extend-the-app-for-azure-ad-authentication)
+- [Exercise 4: Extend the app for Microsoft Graph](#exercise-4-extend-the-app-for-microsoft-graph)
 
 ## Prerequisites
 
@@ -33,7 +33,7 @@ Open Visual Studio, and select **File > New > Project**. In the **New Project** 
 
 > Note: Ensure that you enter the exact same name for the Visual Studio Project that is specified in these lab instructions. The Visual Studio Project name becomes part of the namespace in the code. The code inside these instructions depends on the namespace matching the Visual Studio Project name specified in these instructions. If you use a different project name the code will not compile unless you adjust all the namespaces to match the Visual Studio Project name you enter when you create the project.
 
-Select **OK**. In the **New ASP.NET Web Application Project** dialog, select **MVC** (under **ASP.NET 4.6.1 Templates**) and select **OK**.
+Select **OK**. In the **New ASP.NET Web Application Project** dialog, select **MVC** (under **ASP.NET 4.7.0 Templates**) and select **OK**.
 
 Press **F5** or select **Debug > Start Debugging**. If everything is working, your default browser should open and display a default ASP.NET page.
 
@@ -69,6 +69,7 @@ namespace graph_tutorial.Models
 {
     public class Alert
     {
+        public const string AlertKey = "TempDataAlerts";
         public string Message { get; set; }
         public string Debug { get; set; }
     }
@@ -304,16 +305,16 @@ Right-click the **graph-tutorial** project in Solution Explorer and choose **Add
 <appSettings>
     <add key="ida:AppID" value="YOUR APP ID" />
     <add key="ida:AppSecret" value="YOUR APP PASSWORD" />
-    <add key="ida:RedirectUri" value="http://localhost:64107/" />
-    <add key="ida:AppScopes" value="openid email profile offline_access     User.Read Calendars.Read" />
+    <add key="ida:RedirectUri" value="http://localhost:PORT/" />
+    <add key="ida:AppScopes" value="email User.Read Calendars.Read" />
 </appSettings>
 ```
 
-Replace `YOUR APP ID HERE` with the application ID from the Application Registration Portal, and replace `YOUR APP SECRET HERE` with the password you generated. Also be sure to modify the value for the `ida:RedirectUri` to match your application's URL.
+Replace `YOUR APP ID HERE` with the application ID from the Application Registration Portal, and replace `YOUR APP SECRET HERE` with the password you generated. Also be sure to modify the `PORT` value for the `ida:RedirectUri` to match your application's URL.
 
 > **Important:** If you're using source control such as git, now would be a good time to exclude the `PrivateSettings.config` file from source control to avoid inadvertently leaking your app ID and password.
 
-Update `Web.config` to load this new file. Replace the `<appSettings>` line with the following
+Update `Web.config` to load this new file. Replace the `<appSettings>` (line 7) with the following
 
 ```xml
 <appSettings file="PrivateSettings.config">
@@ -470,10 +471,11 @@ Add a controller to handle sign-in. Right-click the **Controllers** folder in So
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OpenIdConnect;
 using System.Web;
+using System.Web.Mvc;
 
 namespace graph_tutorial.Controllers
 {
-    public class AccountController : BaseController
+    public class AccountController : Controller
     {
         public void SignIn()
         {
@@ -668,6 +670,13 @@ namespace graph_tutorial.TokenStorage
 
 This code creates a `SessionTokenStore` class that works with the MSAL library's `TokenCache` class. Most of the code here involves serializing and deserializing the `TokenCache` to the session. It also provides a class and methods to serialize and deserialize the user's details to the session.
 
+Now, add the following `using` statement to the top of the `App_Start/Startup.Auth.cs` file.
+
+```cs
+using graph_tutorial.TokenStorage;
+using System.IdentityModel.Claims;
+```
+
 Now update the `OnAuthorizationCodeReceivedAsync` function to create an instance of the `SessionTokenStore` class and provide that to the constructor for the `ConfidentialClientApplication` object. That will cause MSAL to use your cache implementation for storing tokens. Replace the existing `OnAuthorizationCodeReceivedAsync` function with the following.
 
 ```js
@@ -727,6 +736,7 @@ The cached user details are something that every view in the application will ne
 using graph_tutorial.TokenStorage;
 using System.Security.Claims;
 using System.Web;
+using Microsoft.Owin.Security.Cookies;
 ```
 
 Then add the following function.
@@ -758,11 +768,13 @@ protected override void OnActionExecuting(ActionExecutingContext filterContext)
 }
 ```
 
-Restart the server and go through the sign-in process. You should end up back on the home page, but the UI should change to indicate that you are signed-in.
+Start the server and go through the sign-in process. You should end up back on the home page, but the UI should change to indicate that you are signed-in.
 
 ![A screenshot of the home page after signing in](/Images/add-aad-auth-01.png)
 
 Click the user avatar in the top right corner to access the **Sign Out** link. Clicking **Sign Out** resets the session and returns you to the home page.
+
+>Note: If you have difficulty with making the labs work it is more than likely that you're having issues with the user cache. Please try clearing your browser cache and/or creating a private or guest session.
 
 ![A screenshot of the dropdown menu with the Sign Out link](/Images/add-aad-auth-02.png)
 
