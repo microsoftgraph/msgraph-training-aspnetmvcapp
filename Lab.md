@@ -49,10 +49,10 @@ Select **Tools > NuGet Package Manager > Package Manager Console**. In the Packa
 
 ```Powershell
 Update-Package bootstrap
+Install-Package Microsoft.Identity.Client -Version 1.1.4-preview0002
 Install-Package Microsoft.Owin.Host.SystemWeb
 Install-Package Microsoft.Owin.Security.OpenIdConnect
 Install-Package Microsoft.Owin.Security.Cookies
-Install-Package Microsoft.Identity.Client -Pre
 Install-Package Microsoft.Graph
 ```
 
