@@ -16,7 +16,7 @@ Open Visual Studio, and select **File > New > Project**. In the **New Project** 
 
 > Note: Ensure that you enter the exact same name for the Visual Studio Project that is specified in these lab instructions. The Visual Studio Project name becomes part of the namespace in the code. The code inside these instructions depends on the namespace matching the Visual Studio Project name specified in these instructions. If you use a different project name the code will not compile unless you adjust all the namespaces to match the Visual Studio Project name you enter when you create the project.
 
-Select **OK**. In the **New ASP.NET Web Application Project** dialog, select **MVC** (under **ASP.NET 4.6.1 Templates**) and select **OK**.
+Select **OK**. In the **New ASP.NET Web Application Project** dialog, select **MVC** (under **ASP.NET 4.7 Templates**) and select **OK**.
 
 Press **F5** or select **Debug > Start Debugging**. If everything is working, your default browser should open and display a default ASP.NET page.
 
@@ -35,7 +35,7 @@ Update-Package bootstrap
 Install-Package Microsoft.Owin.Host.SystemWeb
 Install-Package Microsoft.Owin.Security.OpenIdConnect
 Install-Package Microsoft.Owin.Security.Cookies
-Install-Package Microsoft.Identity.Client -Pre
+Install-Package Microsoft.Identity.Client -Version 1.1.4-preview0002
 Install-Package Microsoft.Graph
 ```
 
@@ -52,6 +52,7 @@ namespace graph_tutorial.Models
 {
     public class Alert
     {
+        public const string AlertKey = "TempDataAlerts";
         public string Message { get; set; }
         public string Debug { get; set; }
     }
