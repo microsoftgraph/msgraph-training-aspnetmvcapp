@@ -37,7 +37,7 @@ This module has been recorded and is available in the Office Development YouTube
 
 | Version |        Date        |                       Comments                       |
 | ------- | ------------------ | ---------------------------------------------------- |
-| 1.3     | September 12, 2018 | 2018Q4 content refresh                               |
+| 1.4     | September 12, 2018 | 2019Q1 content refresh                               |
 | 1.3     | August 24, 2018    | Revised modules for consistency with other training. |
 | 1.2     | June 28, 2018      | Added screencast.                                    |
 | 1.1     | June 04, 2018      | Rewritten to use latest guidance.                    |
