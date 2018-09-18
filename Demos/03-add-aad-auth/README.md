@@ -1,6 +1,50 @@
 # Extend the ASP.NET MVC app for Azure AD Authentication
 
-In this demo you will extend the application from the previous demo to support authentication with Azure AD. This is required to obtain the necessary OAuth access token to call the Microsoft Graph. In this step you will integrate the OWIN middleware and the [Microsoft Authentication Library](https://www.nuget.org/packages/Microsoft.Identity.Client/) library into the application.
+In this exercise, you will create a new Azure AD web application registration using the Application Registry Portal (ARP).
+
+1. Open a browser and navigate to the [Application Registration Portal](https://apps.dev.microsoft.com). Login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
+
+1. Select **Add an app** at the top of the page.
+
+    > **Note:** If you see more than one **Add an app** button on the page, select the one that corresponds to the **Converged apps** list.
+
+1. On the **Register your application** page, set the **Application Name** to **ASP.NET Graph Tutorial** and select **Create**.
+
+    ![Screenshot of creating a new app in the App Registration Portal website](Images/arp-create-app-01.png)
+
+1. On the **ASP.NET Graph Tutorial Registration** page, under the **Properties** section, copy the **Application Id** as you will need it later.
+
+    ![Screenshot of newly created application's ID](Images/arp-create-app-02.png)
+
+1. Scroll down to the **Application Secrets** section.
+
+    1. Select **Generate New Password**.
+    1. In the **New password generated** dialog, copy the contents of the box as you will need it later.
+
+        > **Important:** This password is never shown again, so make sure you copy it now.
+
+    ![Screenshot of newly created application's password](Images/arp-create-app-03.png)
+
+1. Determine your ASP.NET app's URL. In Visual Studio's Solution Explorer, select the **graph-tutorial** project. In the **Properties** window, find the value of **URL**. Copy this value.
+
+    ![Screenshot of the Visual Studio Properties window](Images/vs-project-url.png)
+
+1. Scroll down to the **Platforms** section.
+
+    1. Select **Add Platform**.
+    1. In the **Add Platform** dialog, select **Web**.
+
+        ![Screenshot creating a platform for the app](Images/arp-create-app-04.png)
+
+    1. In the **Web** platform box, enter the URL you copied from the Visual Studio project's properties for the **Redirect URLs**.
+
+        ![Screenshot of the newly added Web platform for the application](Images/arp-create-app-05.png)
+
+1. Scroll to the bottom of the page and select **Save**.
+
+## Exercise 3: Extend the app for Azure AD Authentication
+
+In this exercise you will extend the application from the previous exercise to support authentication with Azure AD. This is required to obtain the necessary OAuth access token to call the Microsoft Graph. In this step you will integrate the OWIN middleware and the [Microsoft Authentication Library](https://www.nuget.org/packages/Microsoft.Identity.Client/) library into the application.
 
 Right-click the **graph-tutorial** project in Solution Explorer and choose **Add > New Item...**. Choose **Web Configuration File**, name the file `PrivateSettings.config` and choose **Add**. Replace its entire contents with the following code.
 
@@ -8,22 +52,22 @@ Right-click the **graph-tutorial** project in Solution Explorer and choose **Add
 <appSettings>
     <add key="ida:AppID" value="YOUR APP ID" />
     <add key="ida:AppSecret" value="YOUR APP PASSWORD" />
-    <add key="ida:RedirectUri" value="http://localhost:64107/" />
-    <add key="ida:AppScopes" value="openid email profile offline_access     User.Read Calendars.Read" />
+    <add key="ida:RedirectUri" value="http://localhost:PORT/" />
+    <add key="ida:AppScopes" value="email User.Read Calendars.Read" />
 </appSettings>
 ```
 
-Replace `YOUR APP ID HERE` with the application ID from the Application Registration Portal, and replace `YOUR APP SECRET HERE` with the password you generated. Also be sure to modify the value for the `ida:RedirectUri` to match your application's URL.
+Replace `YOUR APP ID HERE` with the application ID from the Application Registration Portal, and replace `YOUR APP SECRET HERE` with the password you generated. Also be sure to modify the `PORT` value for the `ida:RedirectUri` to match your application's URL.
 
 > **Important:** If you're using source control such as git, now would be a good time to exclude the `PrivateSettings.config` file from source control to avoid inadvertently leaking your app ID and password.
 
-Update `Web.config` to load this new file. Replace the `<appSettings>` line with the following
+Update `Web.config` to load this new file. Replace the `<appSettings>` (line 7) with the following
 
 ```xml
 <appSettings file="PrivateSettings.config">
 ```
 
-## Implement sign-in
+### Implement sign-in
 
 Start by initializing the OWIN middleware to use Azure AD authentication for the app. Right-click the **App_Start** folder in Solution Explorer and choose **Add > Class...**. Name the file `Startup.Auth.cs` and choose **Add**. Replace the entire contents with the following code.
 
@@ -174,10 +218,11 @@ Add a controller to handle sign-in. Right-click the **Controllers** folder in So
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OpenIdConnect;
 using System.Web;
+using System.Web.Mvc;
 
 namespace graph_tutorial.Controllers
 {
-    public class AccountController : BaseController
+    public class AccountController : Controller
     {
         public void SignIn()
         {
@@ -197,7 +242,7 @@ This defines a single action, `SignIn`. This action checks if the request is alr
 
 Save your changes and start the project. Click the sign-in button and you should be redirected to `https://login.microsoftonline.com`. Login with your Microsoft account and consent to the requested permissions. The browser redirects to the app, showing the token.
 
-### Get user details
+#### Get user details
 
 Start by creating a new file to hold all of your Microsoft Graph calls. Right-click the **graph-tutorial** folder in Solution Explorer, and choose **Add > New Folder**. Name the folder `Helpers`. Right click this new folder and choose **Add > Class...**. Name the file `GraphHelper.cs` and choose **Add**. Replace the contents of this file with the following code.
 
@@ -256,7 +301,7 @@ try
 
 Now if you save your changes and start the app, after sign-in you should see the user's name and email address instead of the access token.
 
-## Storing the tokens
+### Storing the tokens
 
 Now that you can get tokens, it's time to implement a way to store them in the app. Since this is a sample app, we'll use the session to store the tokens. A real-world app would use a more reliable secure storage solution, like a database.
 
@@ -372,6 +417,13 @@ namespace graph_tutorial.TokenStorage
 
 This code creates a `SessionTokenStore` class that works with the MSAL library's `TokenCache` class. Most of the code here involves serializing and deserializing the `TokenCache` to the session. It also provides a class and methods to serialize and deserialize the user's details to the session.
 
+Now, add the following `using` statement to the top of the `App_Start/Startup.Auth.cs` file.
+
+```cs
+using graph_tutorial.TokenStorage;
+using System.IdentityModel.Claims;
+```
+
 Now update the `OnAuthorizationCodeReceivedAsync` function to create an instance of the `SessionTokenStore` class and provide that to the constructor for the `ConfidentialClientApplication` object. That will cause MSAL to use your cache implementation for storing tokens. Replace the existing `OnAuthorizationCodeReceivedAsync` function with the following.
 
 ```js
@@ -431,6 +483,7 @@ The cached user details are something that every view in the application will ne
 using graph_tutorial.TokenStorage;
 using System.Security.Claims;
 using System.Web;
+using Microsoft.Owin.Security.Cookies;
 ```
 
 Then add the following function.
@@ -462,15 +515,17 @@ protected override void OnActionExecuting(ActionExecutingContext filterContext)
 }
 ```
 
-Restart the server and go through the sign-in process. You should end up back on the home page, but the UI should change to indicate that you are signed-in.
+Start the server and go through the sign-in process. You should end up back on the home page, but the UI should change to indicate that you are signed-in.
 
 ![A screenshot of the home page after signing in](/Images/add-aad-auth-01.png)
 
 Click the user avatar in the top right corner to access the **Sign Out** link. Clicking **Sign Out** resets the session and returns you to the home page.
 
+>Note: If you have difficulty with making the labs work it is more than likely that you're having issues with the user cache. Please try clearing your browser cache and/or creating a private or guest session.
+
 ![A screenshot of the dropdown menu with the Sign Out link](/Images/add-aad-auth-02.png)
 
-## Refreshing tokens
+### Refreshing tokens
 
 At this point your application has an access token, which is sent in the `Authorization` header of API calls. This is the token that allows the app to access the Microsoft Graph on the user's behalf.
 
