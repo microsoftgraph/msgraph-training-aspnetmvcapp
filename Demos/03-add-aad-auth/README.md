@@ -23,7 +23,7 @@ Update `Web.config` to load this new file. Replace the `<appSettings>` (line 7) 
 <appSettings file="PrivateSettings.config">
 ```
 
-### Implement sign-in
+## Implement sign-in
 
 Start by initializing the OWIN middleware to use Azure AD authentication for the app. Right-click the **App_Start** folder in Solution Explorer and choose **Add > Class...**. Name the file `Startup.Auth.cs` and choose **Add**. Replace the entire contents with the following code.
 
@@ -198,7 +198,7 @@ This defines a single action, `SignIn`. This action checks if the request is alr
 
 Save your changes and start the project. Click the sign-in button and you should be redirected to `https://login.microsoftonline.com`. Login with your Microsoft account and consent to the requested permissions. The browser redirects to the app, showing the token.
 
-#### Get user details
+### Get user details
 
 Start by creating a new file to hold all of your Microsoft Graph calls. Right-click the **graph-tutorial** folder in Solution Explorer, and choose **Add > New Folder**. Name the folder `Helpers`. Right click this new folder and choose **Add > Class...**. Name the file `GraphHelper.cs` and choose **Add**. Replace the contents of this file with the following code.
 
