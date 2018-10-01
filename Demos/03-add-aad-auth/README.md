@@ -257,7 +257,7 @@ try
 
 Now if you save your changes and start the app, after sign-in you should see the user's name and email address instead of the access token.
 
-### Storing the tokens
+## Storing the tokens
 
 Now that you can get tokens, it's time to implement a way to store them in the app. Since this is a sample app, we'll use the session to store the tokens. A real-world app would use a more reliable secure storage solution, like a database.
 
@@ -481,7 +481,7 @@ Click the user avatar in the top right corner to access the **Sign Out** link. C
 
 ![A screenshot of the dropdown menu with the Sign Out link](/Images/add-aad-auth-02.png)
 
-### Refreshing tokens
+## Refreshing tokens
 
 At this point your application has an access token, which is sent in the `Authorization` header of API calls. This is the token that allows the app to access the Microsoft Graph on the user's behalf.
 
