@@ -1,49 +1,5 @@
 # Extend the ASP.NET MVC app for Azure AD Authentication
 
-In this exercise, you will create a new Azure AD web application registration using the Application Registry Portal (ARP).
-
-1. Open a browser and navigate to the [Application Registration Portal](https://apps.dev.microsoft.com). Login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
-
-1. Select **Add an app** at the top of the page.
-
-    > **Note:** If you see more than one **Add an app** button on the page, select the one that corresponds to the **Converged apps** list.
-
-1. On the **Register your application** page, set the **Application Name** to **ASP.NET Graph Tutorial** and select **Create**.
-
-    ![Screenshot of creating a new app in the App Registration Portal website](Images/arp-create-app-01.png)
-
-1. On the **ASP.NET Graph Tutorial Registration** page, under the **Properties** section, copy the **Application Id** as you will need it later.
-
-    ![Screenshot of newly created application's ID](Images/arp-create-app-02.png)
-
-1. Scroll down to the **Application Secrets** section.
-
-    1. Select **Generate New Password**.
-    1. In the **New password generated** dialog, copy the contents of the box as you will need it later.
-
-        > **Important:** This password is never shown again, so make sure you copy it now.
-
-    ![Screenshot of newly created application's password](Images/arp-create-app-03.png)
-
-1. Determine your ASP.NET app's URL. In Visual Studio's Solution Explorer, select the **graph-tutorial** project. In the **Properties** window, find the value of **URL**. Copy this value.
-
-    ![Screenshot of the Visual Studio Properties window](Images/vs-project-url.png)
-
-1. Scroll down to the **Platforms** section.
-
-    1. Select **Add Platform**.
-    1. In the **Add Platform** dialog, select **Web**.
-
-        ![Screenshot creating a platform for the app](Images/arp-create-app-04.png)
-
-    1. In the **Web** platform box, enter the URL you copied from the Visual Studio project's properties for the **Redirect URLs**.
-
-        ![Screenshot of the newly added Web platform for the application](Images/arp-create-app-05.png)
-
-1. Scroll to the bottom of the page and select **Save**.
-
-## Exercise 3: Extend the app for Azure AD Authentication
-
 In this exercise you will extend the application from the previous exercise to support authentication with Azure AD. This is required to obtain the necessary OAuth access token to call the Microsoft Graph. In this step you will integrate the OWIN middleware and the [Microsoft Authentication Library](https://www.nuget.org/packages/Microsoft.Identity.Client/) library into the application.
 
 Right-click the **graph-tutorial** project in Solution Explorer and choose **Add > New Item...**. Choose **Web Configuration File**, name the file `PrivateSettings.config` and choose **Add**. Replace its entire contents with the following code.
@@ -53,7 +9,7 @@ Right-click the **graph-tutorial** project in Solution Explorer and choose **Add
     <add key="ida:AppID" value="YOUR APP ID" />
     <add key="ida:AppSecret" value="YOUR APP PASSWORD" />
     <add key="ida:RedirectUri" value="http://localhost:PORT/" />
-    <add key="ida:AppScopes" value="email User.Read Calendars.Read" />
+    <add key="ida:AppScopes" value="User.Read Calendars.Read" />
 </appSettings>
 ```
 
@@ -67,7 +23,7 @@ Update `Web.config` to load this new file. Replace the `<appSettings>` (line 7) 
 <appSettings file="PrivateSettings.config">
 ```
 
-### Implement sign-in
+## Implement sign-in
 
 Start by initializing the OWIN middleware to use Azure AD authentication for the app. Right-click the **App_Start** folder in Solution Explorer and choose **Add > Class...**. Name the file `Startup.Auth.cs` and choose **Add**. Replace the entire contents with the following code.
 
@@ -242,7 +198,7 @@ This defines a single action, `SignIn`. This action checks if the request is alr
 
 Save your changes and start the project. Click the sign-in button and you should be redirected to `https://login.microsoftonline.com`. Login with your Microsoft account and consent to the requested permissions. The browser redirects to the app, showing the token.
 
-#### Get user details
+### Get user details
 
 Start by creating a new file to hold all of your Microsoft Graph calls. Right-click the **graph-tutorial** folder in Solution Explorer, and choose **Add > New Folder**. Name the folder `Helpers`. Right click this new folder and choose **Add > Class...**. Name the file `GraphHelper.cs` and choose **Add**. Replace the contents of this file with the following code.
 
@@ -301,7 +257,7 @@ try
 
 Now if you save your changes and start the app, after sign-in you should see the user's name and email address instead of the access token.
 
-### Storing the tokens
+## Storing the tokens
 
 Now that you can get tokens, it's time to implement a way to store them in the app. Since this is a sample app, we'll use the session to store the tokens. A real-world app would use a more reliable secure storage solution, like a database.
 
@@ -426,7 +382,7 @@ using System.IdentityModel.Claims;
 
 Now update the `OnAuthorizationCodeReceivedAsync` function to create an instance of the `SessionTokenStore` class and provide that to the constructor for the `ConfidentialClientApplication` object. That will cause MSAL to use your cache implementation for storing tokens. Replace the existing `OnAuthorizationCodeReceivedAsync` function with the following.
 
-```js
+```cs
 private async Task OnAuthorizationCodeReceivedAsync(AuthorizationCodeReceivedNotification notification)
 {
     // Get the signed in user's id and create a token cache
@@ -525,7 +481,7 @@ Click the user avatar in the top right corner to access the **Sign Out** link. C
 
 ![A screenshot of the dropdown menu with the Sign Out link](/Images/add-aad-auth-02.png)
 
-### Refreshing tokens
+## Refreshing tokens
 
 At this point your application has an access token, which is sent in the `Authorization` header of API calls. This is the token that allows the app to access the Microsoft Graph on the user's behalf.
 
