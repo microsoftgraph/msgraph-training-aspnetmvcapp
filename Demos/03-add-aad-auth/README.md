@@ -382,7 +382,7 @@ using System.IdentityModel.Claims;
 
 Now update the `OnAuthorizationCodeReceivedAsync` function to create an instance of the `SessionTokenStore` class and provide that to the constructor for the `ConfidentialClientApplication` object. That will cause MSAL to use your cache implementation for storing tokens. Replace the existing `OnAuthorizationCodeReceivedAsync` function with the following.
 
-```js
+```cs
 private async Task OnAuthorizationCodeReceivedAsync(AuthorizationCodeReceivedNotification notification)
 {
     // Get the signed in user's id and create a token cache
