@@ -49,11 +49,11 @@ Select **Tools > NuGet Package Manager > Package Manager Console**. In the Packa
 
 ```Powershell
 Update-Package bootstrap
-Install-Package Microsoft.Identity.Client -Version 1.1.4-preview0002
 Install-Package Microsoft.Owin.Host.SystemWeb
 Install-Package Microsoft.Owin.Security.OpenIdConnect
 Install-Package Microsoft.Owin.Security.Cookies
-Install-Package Microsoft.Graph
+Install-Package Microsoft.Identity.Client -Version 2.1.0-preview
+Install-Package Microsoft.Graph -Version 1.11.0
 ```
 
 Create a basic OWIN startup class. Right-click the `graph-tutorial` folder in Solution Explorer and choose **Add > New Item**. Choose the **OWIN Startup Class** template, name the file `Startup.cs`, and choose **Add**.
@@ -879,10 +879,12 @@ private static GraphServiceClient GetAuthenticatedClient()
                     appId, redirectUri, new ClientCredential(appSecret),
                     tokenStore.GetMsalCacheInstance(), null);
 
+                var accounts = await idClient.GetAccountsAsync();
+
                 // By calling this here, the token can be refreshed
                 // if it's expired right before the Graph call is made
                 var result = await idClient.AcquireTokenSilentAsync(
-                    graphScopes.Split(' '), idClient.Users.First());
+                    graphScopes.Split(' '), accounts.FirstOrDefault());
 
                 requestMessage.Headers.Authorization =
                     new AuthenticationHeaderValue("Bearer", result.AccessToken);

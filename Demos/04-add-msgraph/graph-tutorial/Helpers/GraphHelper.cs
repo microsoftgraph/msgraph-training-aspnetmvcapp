@@ -59,10 +59,12 @@ namespace graph_tutorial.Helpers
                             appId, redirectUri, new ClientCredential(appSecret), 
                             tokenStore.GetMsalCacheInstance(), null);
 
+                        var accounts = await idClient.GetAccountsAsync();
+
                         // By calling this here, the token can be refreshed
                         // if it's expired right before the Graph call is made
                         var result = await idClient.AcquireTokenSilentAsync(
-                            graphScopes.Split(' '), idClient.Users.First());
+                            graphScopes.Split(' '), accounts.FirstOrDefault());
 
                         requestMessage.Headers.Authorization =
                             new AuthenticationHeaderValue("Bearer", result.AccessToken);

@@ -35,8 +35,8 @@ Update-Package bootstrap
 Install-Package Microsoft.Owin.Host.SystemWeb
 Install-Package Microsoft.Owin.Security.OpenIdConnect
 Install-Package Microsoft.Owin.Security.Cookies
-Install-Package Microsoft.Identity.Client -Version 1.1.4-preview0002
-Install-Package Microsoft.Graph
+Install-Package Microsoft.Identity.Client -Version 2.1.0-preview
+Install-Package Microsoft.Graph -Version 1.11.0
 ```
 
 Create a basic OWIN startup class. Right-click the `graph-tutorial` folder in Solution Explorer and choose **Add > New Item**. Choose the **OWIN Startup Class** template, name the file `Startup.cs`, and choose **Add**.
