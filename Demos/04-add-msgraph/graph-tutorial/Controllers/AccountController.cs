@@ -1,5 +1,8 @@
-﻿using Microsoft.Owin.Security;
+﻿using graph_tutorial.TokenStorage;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
 
@@ -16,6 +19,22 @@ namespace graph_tutorial.Controllers
                     new AuthenticationProperties { RedirectUri = "/" },
                     OpenIdConnectAuthenticationDefaults.AuthenticationType);
             }
+        }
+
+        public ActionResult SignOut()
+        {
+            if (Request.IsAuthenticated)
+            {
+                string signedInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
+                SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId, HttpContext);
+
+                tokenStore.Clear();
+
+                Request.GetOwinContext().Authentication.SignOut(
+                    CookieAuthenticationDefaults.AuthenticationType);
+            }
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

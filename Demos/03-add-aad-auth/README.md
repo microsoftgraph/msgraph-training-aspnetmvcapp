@@ -172,7 +172,9 @@ Add a controller to handle sign-in. Right-click the **Controllers** folder in So
 
 ```cs
 using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
 
@@ -190,11 +192,22 @@ namespace graph_tutorial.Controllers
                     OpenIdConnectAuthenticationDefaults.AuthenticationType);
             }
         }
+
+        public ActionResult SignOut()
+        {
+            if (Request.IsAuthenticated)
+            {
+                Request.GetOwinContext().Authentication.SignOut(
+                    CookieAuthenticationDefaults.AuthenticationType);
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
 ```
 
-This defines a single action, `SignIn`. This action checks if the request is already authenticated. If not, it invokes the OWIN middleware to authenticate the user.
+This defines a `SignIn` and `SignOut` action. The `SignIn` action checks if the request is already authenticated. If not, it invokes the OWIN middleware to authenticate the user. The `SignOut` action invokes the OWIN middleware to sign out.
 
 Save your changes and start the project. Click the sign-in button and you should be redirected to `https://login.microsoftonline.com`. Login with your Microsoft account and consent to the requested permissions. The browser redirects to the app, showing the token.
 
@@ -432,6 +445,32 @@ To summarize the changes:
 - The code now passes a `TokenCache` object to the constructor for `ConfidentialClientApplication`. The MSAL library will handle the logic of storing the tokens and refreshing it when needed.
 - The code now passes the user details obtained from Microsoft Graph to the `SessionTokenStore` object to store in the session.
 - On success, the code no longer redirects, it just returns. This allows the OWIN middleware to complete the authentication process.
+
+Since the token cache is stored in the session, update the `SignOut` action in `Controllers/AccountController.cs` to clear the token store before signing out. First, add the following `using` statement to the top of the file.
+
+```cs
+using graph_tutorial.TokenStorage;
+```
+
+Then, replace the existing `SignOut` function with the following.
+
+```cs
+public ActionResult SignOut()
+{
+    if (Request.IsAuthenticated)
+    {
+        string signedInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
+        SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId, HttpContext);
+
+        tokenStore.Clear();
+
+        Request.GetOwinContext().Authentication.SignOut(
+            CookieAuthenticationDefaults.AuthenticationType);
+    }
+
+    return RedirectToAction("Index", "Home");
+}
+```
 
 The cached user details are something that every view in the application will need, so update the `BaseController` class to load this information from the session. Open `Controllers/BaseController.cs` and add the following `using` statements to the top of the file.
 
