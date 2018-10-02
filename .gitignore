@@ -176,3 +176,5 @@ FakesAssemblies/
 .vs/
 .vscode/
 PrivateSettings.config
+QSTemp/
+AspNetQuickStart.zip
