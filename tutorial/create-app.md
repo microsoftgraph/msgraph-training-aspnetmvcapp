@@ -1,5 +1,7 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
+IN TRAINING REPO
+
 ## Prerequisites
 
 Before you start this demo, you should have [Visual Studio](https://visualstudio.microsoft.com/vs/) installed on your development machine. If you do not have Visual Studio, visit the previous link for download options.
