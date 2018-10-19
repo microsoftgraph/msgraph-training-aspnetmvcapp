@@ -619,7 +619,15 @@ namespace graph_tutorial.TokenStorage
 
         public bool HasData()
         {
-            return (httpContext.Session[cacheId] != null && ((byte[])httpContext.Session[cacheId]).Length > 0);
+            // Change because otherwise he will check only on the tokencache ID which is empty by login the user.
+            if(httpContext.Session[cacheId] == null)
+            {
+                return (httpContext.Session[cachedUserId] != null && httpContext.Session[cachedUserId].ToString().Length > 0);
+            }
+            else
+            {
+                return (((byte[])httpContext.Session[cacheId]).Length > 0);
+            }
         }
 
         public void Clear()
