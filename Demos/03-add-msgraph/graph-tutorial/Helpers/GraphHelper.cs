@@ -1,4 +1,5 @@
-﻿using graph_tutorial.TokenStorage;
+﻿// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information.
+using graph_tutorial.TokenStorage;
 using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace graph_tutorial.Helpers
                 new DelegateAuthenticationProvider(
                     async (requestMessage) =>
                     {
-                        requestMessage.Headers.Authorization = 
+                        requestMessage.Headers.Authorization =
                             new AuthenticationHeaderValue("Bearer", accessToken);
                     }));
 
@@ -56,7 +57,7 @@ namespace graph_tutorial.Helpers
                             new HttpContextWrapper(HttpContext.Current));
 
                         var idClient = new ConfidentialClientApplication(
-                            appId, redirectUri, new ClientCredential(appSecret), 
+                            appId, redirectUri, new ClientCredential(appSecret),
                             tokenStore.GetMsalCacheInstance(), null);
 
                         var accounts = await idClient.GetAccountsAsync();

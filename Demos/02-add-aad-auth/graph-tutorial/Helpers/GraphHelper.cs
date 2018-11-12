@@ -1,4 +1,5 @@
-﻿using Microsoft.Graph;
+﻿// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information.
+using Microsoft.Graph;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace graph_tutorial.Helpers
                 new DelegateAuthenticationProvider(
                     async (requestMessage) =>
                     {
-                        requestMessage.Headers.Authorization = 
+                        requestMessage.Headers.Authorization =
                             new AuthenticationHeaderValue("Bearer", accessToken);
                     }));
 

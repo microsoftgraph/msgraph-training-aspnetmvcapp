@@ -1,4 +1,5 @@
-﻿@{
+﻿@* Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information. *@
+@{
     var alerts = TempData.ContainsKey(graph_tutorial.Models.Alert.AlertKey) ?
         (List<graph_tutorial.Models.Alert>)TempData[graph_tutorial.Models.Alert.AlertKey] :
         new List<graph_tutorial.Models.Alert>();

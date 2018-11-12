@@ -1,4 +1,5 @@
-﻿using Microsoft.Identity.Client;
+﻿// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information.
+using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Web;
@@ -62,7 +63,7 @@ namespace graph_tutorial.TokenStorage
         {
             sessionLock.EnterReadLock();
 
-            // Optimistically set HasStateChanged to false. 
+            // Optimistically set HasStateChanged to false.
             // We need to do it early to avoid losing changes made by a concurrent thread.
             tokenCache.HasStateChanged = false;
 
@@ -70,10 +71,10 @@ namespace graph_tutorial.TokenStorage
             sessionLock.ExitReadLock();
         }
 
-        // Triggered right before MSAL needs to access the cache. 
+        // Triggered right before MSAL needs to access the cache.
         private void BeforeAccessNotification(TokenCacheNotificationArgs args)
         {
-            // Reload the cache from the persistent store in case it changed since the last access. 
+            // Reload the cache from the persistent store in case it changed since the last access.
             Load();
         }
 
