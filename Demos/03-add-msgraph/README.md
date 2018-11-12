@@ -1,147 +1,63 @@
-# Extend the ASP.NET MVC app for Microsoft Graph
+# How to run the completed project
 
-In this demo you will incorporate the Microsoft Graph into the application. For this application, you will use the [Microsoft Graph Client Library for .NET](https://github.com/microsoftgraph/msgraph-sdk-dotnet) to make calls to Microsoft Graph.
+## Prerequisites
 
-## Get calendar events from Outlook
+To run the completed project in this folder, you need the following:
 
-Start by extending the `GraphHelper` class you created in the last module. First, add the following `using` statements to the top of the `Helpers/GraphHelper.cs` file.
+- [Visual Studio](https://visualstudio.microsoft.com/vs/) installed on your development machine. If you do not have Visual Studio, visit the previous link for download options. (**Note:** This tutorial was written with Visual Studio 2017 version 15.81. The steps in this guide may work with other versions, but that has not been tested.)
+- Either a personal Microsoft account with a mailbox on Outlook.com, or a Microsoft work or school account.
 
-```cs
-using graph_tutorial.TokenStorage;
-using Microsoft.Identity.Client;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Security.Claims;
-using System.Web;
-```
+If you don't have a Microsoft account, there are a couple of options to get a free account:
 
-Then add the following code to the `GraphHelper` class.
+- You can [sign up for a new personal Microsoft account](https://signup.live.com/signup?wa=wsignin1.0&rpsnv=12&ct=1454618383&rver=6.4.6456.0&wp=MBI_SSL_SHARED&wreply=https://mail.live.com/default.aspx&id=64855&cbcxt=mai&bk=1454618383&uiflavor=web&uaid=b213a65b4fdc484382b6622b3ecaa547&mkt=E-US&lc=1033&lic=1).
+- You can [sign up for the Office 365 Developer Program](https://developer.microsoft.com/office/dev-program) to get a free Office 365 subscription.
 
-```cs
-// Load configuration settings from PrivateSettings.config
-private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
-private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
-private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
-private static string graphScopes = ConfigurationManager.AppSettings["ida:AppScopes"];
+## Register a web application with the Application Registration Portal
 
-public static async Task<IEnumerable<Event>> GetEventsAsync()
-{
-    var graphClient = GetAuthenticatedClient();
+1. Open a browser and navigate to the [Application Registration Portal](https://apps.dev.microsoft.com). Login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
 
-    var events = await graphClient.Me.Events.Request()
-        .Select("subject,organizer,start,end")
-        .OrderBy("createdDateTime DESC")
-        .GetAsync();
+1. Select **Add an app** at the top of the page.
 
-    return events.CurrentPage;
-}
+    > **Note:** If you see more than one **Add an app** button on the page, select the one that corresponds to the **Converged apps** list.
 
-private static GraphServiceClient GetAuthenticatedClient()
-{
-    return new GraphServiceClient(
-        new DelegateAuthenticationProvider(
-            async (requestMessage) =>
-            {
-                // Get the signed in user's id and create a token cache
-                string signedInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
-                SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId,
-                    new HttpContextWrapper(HttpContext.Current));
+1. On the **Register your application** page, set the **Application Name** to **ASP.NET Graph Tutorial** and select **Create**.
 
-                var idClient = new ConfidentialClientApplication(
-                    appId, redirectUri, new ClientCredential(appSecret),
-                    tokenStore.GetMsalCacheInstance(), null);
+    ![Screenshot of creating a new app in the App Registration Portal website](../../Images/arp-create-app-01.png)
 
-                var accounts = await idClient.GetAccountsAsync();
+1. On the **ASP.NET Graph Tutorial Registration** page, under the **Properties** section, copy the **Application Id** as you will need it later.
 
-                // By calling this here, the token can be refreshed
-                // if it's expired right before the Graph call is made
-                var result = await idClient.AcquireTokenSilentAsync(
-                    graphScopes.Split(' '), accounts.FirstOrDefault());
+    ![Screenshot of newly created application's ID](../../Images/arp-create-app-02.png)
 
-                requestMessage.Headers.Authorization =
-                    new AuthenticationHeaderValue("Bearer", result.AccessToken);
-            }));
-}
-```
+1. Scroll down to the **Application Secrets** section.
 
-Consider what this code is doing.
+    1. Select **Generate New Password**.
+    1. In the **New password generated** dialog, copy the contents of the box as you will need it later.
 
-- The `GetAuthenticatedClient` function initializes a `GraphServiceClient` with an authentication provider that calls `AcquireTokenSilentAsync`.
-- In the `GetEventsAsync` function:
-  - The URL that will be called is `/v1.0/me/events`.
-  - The `Select` function limits the fields returned for each events to just those the view will actually use.
-  - The `OrderBy` function sorts the results by the date and time they were created, with the most recent item being first.
+        > **Important:** This password is never shown again, so make sure you copy it now.
 
-Now create a controller for the calendar views. Right-click the **Controllers** folder in Solution Explorer and choose **Add > Controller...**. Choose **MVC 5 Controller - Empty** and choose **Add**. Name the controller `CalendarController` and choose **Add**. Replace the entire contents of the new file with the following code.
+    ![Screenshot of newly created application's password](../../Images/arp-create-app-03.png)
 
-```cs
-using graph_tutorial.Helpers;
-using System.Threading.Tasks;
-using System.Web.Mvc;
+1. Scroll down to the **Platforms** section.
 
-namespace graph_tutorial.Controllers
-{
-    public class CalendarController : BaseController
-    {
-        // GET: Calendar
-        [Authorize]
-        public async Task<ActionResult> Index()
-        {
-            var events = await GraphHelper.GetEventsAsync();
-            return Json(events, JsonRequestBehavior.AllowGet);
-        }
-    }
-}
-```
+    1. Select **Add Platform**.
+    1. In the **Add Platform** dialog, select **Web**.
 
-Now you can test this. Start the app, sign in, and click the **Calendar** link in the nav bar. If everything works, you should see a JSON dump of events on the user's calendar.
+        ![Screenshot creating a platform for the app](../../Images/arp-create-app-04.png)
 
-## Display the results
+    1. In the **Web** platform box, enter the URL `http://localhost:64107/` for the **Redirect URLs**.
 
-Now you can add a view to display the results in a more user-friendly manner. In Solution Explorer, right-click the **Views/Calendar** folder and choose **Add > View...**. Name the view `Index` and choose **Add**. Replace the entire contents of the new file with the following code.
+        ![Screenshot of the newly added Web platform for the application](../../Images/arp-create-app-05.png)
 
-```html
-@model IEnumerable<Microsoft.Graph.Event>
+1. Scroll to the bottom of the page and select **Save**.
 
-@{
-    ViewBag.Current = "Calendar";
-}
+## Configure the sample
 
-<h1>Calendar</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Organizer</th>
-            <th scope="col">Subject</th>
-            <th scope="col">Start</th>
-            <th scope="col">End</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Organizer.EmailAddress.Name</td>
-                <td>@item.Subject</td>
-                <td>@Convert.ToDateTime(item.Start.DateTime).ToString("M/d/yy h:mm tt")</td>
-                <td>@Convert.ToDateTime(item.End.DateTime).ToString("M/d/yy h:mm tt")</td>
-            </tr>
-        }
-    </tbody>
-</table>
-```
+1. Rename the `PrivateSettings.config.example` file to `PrivateSettings.config`.
+1. Edit the `PrivateSettings.config` file and make the following changes.
+    1. Replace `YOUR_APP_ID_HERE` with the **Application Id** you got from the App Registration Portal.
+    1. Replace `YOUR_APP_PASSWORD_HERE` with the password you got from the App Registration Portal.
+1. Open `graph-tutorial.sln` in Visual Studio. In Solution Explorer, right-click the **graph-tutorial** solution and choose **Restore NuGet Packages**.
 
-That will loop through a collection of events and add a table row for each one. Remove the `return Json(events, JsonRequestBehavior.AllowGet);` line from the `Index` function in `Controllers/CalendarController.cs`, and replace it with the following code.
+## Run the sample
 
-```cs
-return View(events);
-```
-
-Start the app, sign in, and click the **Calendar** link. The app should now render a table of events.
-
-![A screenshot of the table of events](/Images/add-msgraph-01.png)
-
-## Next steps
-
-Now that you have a working app that calls Microsoft Graph, you can experiment and add new features. Visit the [Microsoft Graph documentation](https://developer.microsoft.com/graph/docs/concepts/overview) to see all of the data you can access with Microsoft Graph.
+In Visual Studio, press **F5** or choose **Debug > Start Debugging**.
