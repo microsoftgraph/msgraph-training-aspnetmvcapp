@@ -1,12 +1,13 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
-In this demo, you will create a new Azure AD web application registration using the Application Registry Portal (ARP).
+In this exercise, you will create a new Azure AD web application registration using the Application Registry Portal (ARP).
 
 1. Open a browser and navigate to the [Application Registration Portal](https://apps.dev.microsoft.com). Login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
 
 1. Select **Add an app** at the top of the page.
 
-    > **Note:** If you see more than one **Add an app** button on the page, select the one that corresponds to the **Converged apps** list.
+    > [!NOTE]
+    > If you see more than one **Add an app** button on the page, select the one that corresponds to the **Converged apps** list.
 
 1. On the **Register your application** page, set the **Application Name** to **ASP.NET Graph Tutorial** and select **Create**.
 
