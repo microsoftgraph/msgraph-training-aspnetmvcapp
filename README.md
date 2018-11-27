@@ -38,6 +38,7 @@ This module has been recorded and is available in the Office Development YouTube
 
 | Version |        Date        |                       Comments                       |
 | ------- | ------------------ | ---------------------------------------------------- |
+| 1.5     | November 27, 2018  | Onboarded to docs.microsoft.com/graph                |
 | 1.4     | September 12, 2018 | 2019Q1 content refresh                               |
 | 1.3     | August 24, 2018    | Revised modules for consistency with other training. |
 | 1.2     | June 28, 2018      | Added screencast.                                    |
