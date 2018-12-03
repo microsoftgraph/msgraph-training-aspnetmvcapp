@@ -5,7 +5,7 @@ This tutorial teaches you how to build an ASP.NET MVC web app that uses the Micr
 > [!TIP]
 > If you prefer to just download the completed tutorial, you can download it in two ways.
 >
-> - Download the [ASP.NET quick start](https://developer.microsoft.com/en-us/graph/quick-start?platform=option-dotnet) to get working code in minutes.
+> - Download the [ASP.NET quick start](https://developer.microsoft.com/graph/quick-start?platform=option-dotnet) to get working code in minutes.
 > - Download or clone the [GitHub repository](https://github.com/microsoftgraph/msgraph-training-aspnetmvcapp).
 
 ## Prerequisites
