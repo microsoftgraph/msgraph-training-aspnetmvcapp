@@ -157,7 +157,7 @@ Now update the global layout of the app. Open the `./Views/Shared/_Layout.cshtml
 </html>
 ```
 
-This code adds [Bootstrap](http://getbootstrap.com/) for simple styling, and [Font Awesome](https://fontawesome.com/) for some simple icons. It also defines a global layout with a nav bar, and uses the `Alert` class to display any alerts.
+This code adds [Bootstrap](https://getbootstrap.com/) for simple styling, and [Font Awesome](https://fontawesome.com/) for some simple icons. It also defines a global layout with a nav bar, and uses the `Alert` class to display any alerts.
 
 Now open `Content/Site.css` and replace its entire contents with the following code.
 
