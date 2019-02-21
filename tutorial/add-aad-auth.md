@@ -13,7 +13,7 @@ Right-click the **graph-tutorial** project in Solution Explorer and choose **Add
 </appSettings>
 ```
 
-Replace `YOUR_APP_ID_HERE` with the application ID from the Application Registration Portal, and replace `YOUR_APP_PASSWORD_HERE` with the password you generated. Also be sure to modify the `PORT` value for the `ida:RedirectUri` to match your application's URL.
+Replace `YOUR_APP_ID_HERE` with the application ID from the Application Registration Portal, and replace `YOUR_APP_PASSWORD_HERE` with the client secret you generated. If your client secret contains any ampersands (`&`), be sure to replace them with `&amp;` in `PrivateSettings.config`. Also be sure to modify the `PORT` value for the `ida:RedirectUri` to match your application's URL.
 
 > [!IMPORTANT]
 > If you're using source control such as git, now would be a good time to exclude the `PrivateSettings.config` file from source control to avoid inadvertently leaking your app ID and password.
@@ -342,11 +342,6 @@ namespace graph_tutorial.TokenStorage
         private void Persist()
         {
             sessionLock.EnterReadLock();
-
-            // Optimistically set HasStateChanged to false.
-            // We need to do it early to avoid losing changes made by a concurrent thread.
-            tokenCache.HasStateChanged = false;
-
             httpContext.Session[cacheId] = tokenCache.Serialize();
             sessionLock.ExitReadLock();
         }
@@ -362,7 +357,7 @@ namespace graph_tutorial.TokenStorage
         private void AfterAccessNotification(TokenCacheNotificationArgs args)
         {
             // if the access operation resulted in a cache update
-            if (tokenCache.HasStateChanged)
+            if (args.HasStateChanged)
             {
                 Persist();
             }
