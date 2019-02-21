@@ -30,7 +30,7 @@ Update-Package bootstrap
 Install-Package Microsoft.Owin.Host.SystemWeb
 Install-Package Microsoft.Owin.Security.OpenIdConnect
 Install-Package Microsoft.Owin.Security.Cookies
-Install-Package Microsoft.Identity.Client -Version 2.1.0-preview
+Install-Package Microsoft.Identity.Client -Version 2.7.0
 Install-Package Microsoft.Graph -Version 1.11.0
 ```
 
