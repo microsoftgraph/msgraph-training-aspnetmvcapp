@@ -1,5 +1,7 @@
 # How to run the completed project
 
+Installing NuGet packages adds content to the /packages, /Content & /Scripts folders. The files within the /Content & /Scripts folders frequently contain 3rd party libraries which do not include redistributable licenses. Therefore the files in these folders are not included in the repository. The NuGet restore process will not repopulate these folders, only a NuGet reinstall of the package will do that. Therefore you will need to reinstall all packages using the NuGet CLI to repopulate these folders if you want to run the final built solution locally. Refer to the following for more information: [Microsoft Docs – How to reinstall and update packages](https://docs.microsoft.com/en-us/nuget/consume-packages/reinstalling-and-updating-packages).”
+
 ## Prerequisites
 
 To run the completed project in this folder, you need the following:
