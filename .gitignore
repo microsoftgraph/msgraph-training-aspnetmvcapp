@@ -12,8 +12,6 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
-[Cc]ontent/
-[Ss]cripts/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -180,3 +178,9 @@ FakesAssemblies/
 PrivateSettings.config
 QSTemp/
 AspNetQuickStart.zip
+
+# project specific
+**/Content/**
+!**/Content/Site.css
+Scripts/
+
