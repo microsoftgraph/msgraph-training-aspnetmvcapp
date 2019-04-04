@@ -178,9 +178,3 @@ FakesAssemblies/
 PrivateSettings.config
 QSTemp/
 AspNetQuickStart.zip
-
-# project specific
-**/Content/**
-!**/Content/Site.css
-Scripts/
-
