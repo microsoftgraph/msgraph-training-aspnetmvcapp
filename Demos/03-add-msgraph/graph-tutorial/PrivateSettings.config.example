@@ -1,6 +1,9 @@
-﻿<appSettings>
-  <add key="ida:AppID" value="YOUR_APP_ID_HERE" />
-  <add key="ida:AppSecret" value="YOUR_APP_PASSWORD_HERE" />
-  <add key="ida:RedirectUri" value="http://localhost:64107/" />
-  <add key="ida:AppScopes" value="User.Read Calendars.Read" />
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
+<appSettings>
+    <add key="ida:AppID" value="YOUR APP ID" />
+    <add key="ida:AppSecret" value="YOUR APP PASSWORD" />
+    <add key="ida:RedirectUri" value="http://localhost:PORT/" />
+    <add key="ida:AppScopes" value="User.Read Calendars.Read" />
 </appSettings>

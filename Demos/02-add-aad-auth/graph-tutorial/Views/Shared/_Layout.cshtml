@@ -1,4 +1,6 @@
-﻿@* Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information. *@
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
 @{
     var alerts = TempData.ContainsKey(graph_tutorial.Models.Alert.AlertKey) ?
         (List<graph_tutorial.Models.Alert>)TempData[graph_tutorial.Models.Alert.AlertKey] :
@@ -14,31 +16,38 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
+          integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
+          crossorigin="anonymous">
 </head>
 
 <body>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container">
             @Html.ActionLink("ASP.NET Graph Tutorial", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = ViewBag.Current == "Home" ? "nav-link active" : "nav-link" })
+                        @Html.ActionLink("Home", "Index", "Home", new { area = "" },
+                            new { @class = ViewBag.Current == "Home" ? "nav-link active" : "nav-link" })
                     </li>
                     @if (Request.IsAuthenticated)
                     {
                         <li class="nav-item" data-turbolinks="false">
-                            @Html.ActionLink("Calendar", "Index", "Calendar", new { area = "" }, new { @class = ViewBag.Current == "Calendar" ? "nav-link active" : "nav-link" })
+                            @Html.ActionLink("Calendar", "Index", "Calendar", new { area = "" },
+                                new { @class = ViewBag.Current == "Calendar" ? "nav-link active" : "nav-link" })
                         </li>
                     }
                 </ul>
                 <ul class="navbar-nav justify-content-end">
                     <li class="nav-item">
-                        <a class="nav-link" href="https://developer.microsoft.com/graph/docs/concepts/overview" target="_blank"><i class="fas fa-external-link-alt mr-1"></i>Docs</a>
+                        <a class="nav-link" href="https://developer.microsoft.com/graph/docs/concepts/overview" target="_blank">
+                            <i class="fas fa-external-link-alt mr-1"></i>Docs
+                        </a>
                     </li>
                     @if (Request.IsAuthenticated)
                     {

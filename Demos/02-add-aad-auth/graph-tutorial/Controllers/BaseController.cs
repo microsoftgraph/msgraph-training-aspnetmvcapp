@@ -1,23 +1,40 @@
-﻿// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 using graph_tutorial.Models;
-using graph_tutorial.TokenStorage;
-using Microsoft.Owin.Security.Cookies;
 using System.Collections.Generic;
+using System.Web.Mvc;
+using graph_tutorial.TokenStorage;
 using System.Security.Claims;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.Owin.Security.Cookies;
 
 namespace graph_tutorial.Controllers
 {
     public abstract class BaseController : Controller
     {
+        protected void Flash(string message, string debug = null)
+        {
+            var alerts = TempData.ContainsKey(Alert.AlertKey) ?
+                (List<Alert>)TempData[Alert.AlertKey] :
+                new List<Alert>();
+
+            alerts.Add(new Alert
+            {
+                Message = message,
+                Debug = debug
+            });
+
+            TempData[Alert.AlertKey] = alerts;
+        }
+
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             if (Request.IsAuthenticated)
             {
                 // Get the signed in user's id and create a token cache
                 string signedInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
-                SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId, HttpContext);
+                SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId, System.Web.HttpContext.Current);
 
                 if (tokenStore.HasData())
                 {
@@ -36,19 +53,6 @@ namespace graph_tutorial.Controllers
             base.OnActionExecuting(filterContext);
         }
 
-        protected void Flash(string message, string debug=null)
-        {
-            var alerts = TempData.ContainsKey(Alert.AlertKey) ?
-                (List<Alert>)TempData[Alert.AlertKey] :
-                new List<Alert>();
 
-            alerts.Add(new Alert
-            {
-                Message = message,
-                Debug = debug
-            });
-
-            TempData[Alert.AlertKey] = alerts;
-        }
     }
 }

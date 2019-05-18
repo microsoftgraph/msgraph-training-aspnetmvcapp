@@ -1,4 +1,6 @@
-﻿// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 using graph_tutorial.Models;
 using System.Collections.Generic;
 using System.Web.Mvc;
@@ -7,7 +9,7 @@ namespace graph_tutorial.Controllers
 {
     public abstract class BaseController : Controller
     {
-        protected void Flash(string message, string debug=null)
+        protected void Flash(string message, string debug = null)
         {
             var alerts = TempData.ContainsKey(Alert.AlertKey) ?
                 (List<Alert>)TempData[Alert.AlertKey] :
