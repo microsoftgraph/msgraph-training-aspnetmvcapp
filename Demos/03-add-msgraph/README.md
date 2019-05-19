@@ -14,6 +14,10 @@ If you don't have a Microsoft account, there are a couple of options to get a fr
 
 ## Register a web application with the Azure Active Directory admin center
 
+1. Determine your ASP.NET app's URL. In Visual Studio's Solution Explorer, select the **graph-tutorial** project. In the **Properties** window, find the value of **URL**. Copy this value.
+
+    ![Screenshot of the Visual Studio Properties window](/tutorial/images/vs-project-url.png)
+
 1. Open a browser and navigate to the [Azure Active Directory admin center](https://aad.portal.azure.com). Login using a **personal account** (aka: Microsoft Account) or **Work or School Account**.
 
 1. Select **Azure Active Directory** in the left-hand navigation, then select **App registrations** under **Manage**.
@@ -24,7 +28,7 @@ If you don't have a Microsoft account, there are a couple of options to get a fr
 
     - Set **Name** to `ASP.NET Graph Tutorial`.
     - Set **Supported account types** to **Accounts in any organizational directory and personal Microsoft accounts**.
-    - Under **Redirect URI**, set the first drop-down to `Web` and set the value to `http://localhost:64107/`.
+    - Under **Redirect URI**, set the first drop-down to `Web` and set the value to the ASP.NET app URL you copied in step 1..
 
     ![A screenshot of the Register an application page](/tutorial/images/aad-register-an-app.png)
 
