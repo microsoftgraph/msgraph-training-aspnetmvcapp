@@ -14,7 +14,7 @@ If you don't have a Microsoft account, there are a couple of options to get a fr
 
 ## Register a web application with the Azure Active Directory admin center
 
-1. Determine your ASP.NET app's URL. In Visual Studio's Solution Explorer, select the **graph-tutorial** project. In the **Properties** window, find the value of **URL**. Copy this value.
+1. Determine your ASP.NET applications's URL. In Visual Studio's Solution Explorer, select the **graph-tutorial** project. In the **Properties** window, find the value of **URL**. Copy this value.
 
     ![Screenshot of the Visual Studio Properties window](/tutorial/images/vs-project-url.png)
 
@@ -56,7 +56,8 @@ If you don't have a Microsoft account, there are a couple of options to get a fr
 1. Rename the `PrivateSettings.config.example` file to `PrivateSettings.config`.
 1. Edit the `PrivateSettings.config` file and make the following changes.
     1. Replace `YOUR_APP_ID_HERE` with the **Application Id** you got from the App Registration Portal.
-    1. Replace `YOUR_APP_PASSWORD_HERE` with the password you got from the App Registration Portal.
+    1. Replace `YOUR_APP_PASSWORD_HERE` with the **Application Secret** you got from the App Registration Portal.
+    1. Replace `PORT` with the port number included as part of your ASP.NET applications's URL.
 1. Open `graph-tutorial.sln` in Visual Studio. In Solution Explorer, right-click the **graph-tutorial** solution and choose **Restore NuGet Packages**.
 
 ## Run the sample
