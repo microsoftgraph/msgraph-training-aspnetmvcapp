@@ -28,7 +28,7 @@ If you don't have a Microsoft account, there are a couple of options to get a fr
 
     - Set **Name** to `ASP.NET Graph Tutorial`.
     - Set **Supported account types** to **Accounts in any organizational directory and personal Microsoft accounts**.
-    - Under **Redirect URI**, set the first drop-down to `Web` and set the value to the ASP.NET app URL you copied in step 1..
+    - Under **Redirect URI**, set the first drop-down to `Web` and set the value to the ASP.NET app URL you copied in step 1.
 
     ![A screenshot of the Register an application page](/tutorial/images/aad-register-an-app.png)
 
