@@ -28,11 +28,11 @@ This module has been recorded and is available in the Office Development YouTube
 
 ## Contributors
 
-|        Roles         |                            Author(s)                             |
-| -------------------- | ---------------------------------------------------------------- |
-| Lab Manuals / Slides | Andrew Connell (Microsoft MVP, Voitanos) @andrewconnell          |
-| QA                   | Julie Turner (Microsoft MVP, Sympraxis Consulting) @juliemturner |
-| Sponsor / Support    | Yina Arenas (Microsoft) @yinaa                                   |
+|        Roles         |                                           Author(s)                                           |
+| -------------------- | --------------------------------------------------------------------------------------------- |
+| Lab Manuals / Slides | Andrew Connell (Microsoft MVP, Voitanos) [@andrewconnell](//github.com/andrewconnell)         |
+| QA                   | Julie Turner (Microsoft MVP, Sympraxis Consulting) [@juliemturner](//github.com/juliemturner) |
+| Sponsor / Support    | Yina Arenas (Microsoft) [@yinaa](//github.com/yinaa)                                          |
 
 ## Version history
 
