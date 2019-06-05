@@ -52,7 +52,5 @@ namespace graph_tutorial.Controllers
 
             base.OnActionExecuting(filterContext);
         }
-
-
     }
 }

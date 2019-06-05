@@ -92,6 +92,7 @@ namespace graph_tutorial.Controllers
         {
             var events = await GraphHelper.GetEventsAsync();
 
+            // Change start and end dates from UTC to local time
             foreach (var ev in events)
             {
                 ev.Start.DateTime = DateTime.Parse(ev.Start.DateTime).ToLocalTime().ToString();
