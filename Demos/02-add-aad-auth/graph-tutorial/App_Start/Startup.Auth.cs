@@ -1,6 +1,6 @@
-﻿// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information.
-using graph_tutorial.Helpers;
-using graph_tutorial.TokenStorage;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -10,9 +10,11 @@ using Microsoft.Owin.Security.Notifications;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
 using System.Configuration;
-using System.IdentityModel.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using graph_tutorial.Helpers;
+using graph_tutorial.TokenStorage;
+using System.IdentityModel.Claims;
 
 namespace graph_tutorial
 {
@@ -43,7 +45,7 @@ namespace graph_tutorial
                       // For demo purposes only, see below
                       ValidateIssuer = false
 
-                      // In a real multitenant app, you would add logic to determine whether the
+                      // In a real multi-tenant app, you would add logic to determine whether the
                       // issuer was from an authorized tenant
                       //ValidateIssuer = true,
                       //IssuerValidator = (issuer, token, tvp) =>
@@ -82,20 +84,21 @@ namespace graph_tutorial
 
         private async Task OnAuthorizationCodeReceivedAsync(AuthorizationCodeReceivedNotification notification)
         {
-            // Get the signed in user's id and create a token cache
-            string signedInUserId = notification.AuthenticationTicket.Identity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId,
-                notification.OwinContext.Environment["System.Web.HttpContextBase"] as HttpContextBase);
+            var idClient = ConfidentialClientApplicationBuilder.Create(appId)
+                .WithRedirectUri(redirectUri)
+                .WithClientSecret(appSecret)
+                .Build();
 
-            var idClient = new ConfidentialClientApplication(
-                appId, redirectUri, new ClientCredential(appSecret), tokenStore.GetMsalCacheInstance(), null);
+            var signedInUserId = notification.AuthenticationTicket.Identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var tokenStore = new SessionTokenStore(signedInUserId, HttpContext.Current);
+            tokenStore.Initialize(idClient.UserTokenCache);
 
             try
             {
                 string[] scopes = graphScopes.Split(' ');
 
-                var result = await idClient.AcquireTokenByAuthorizationCodeAsync(
-                    notification.Code, scopes);
+                var result = await idClient.AcquireTokenByAuthorizationCode(
+                    scopes, notification.Code).ExecuteAsync();
 
                 var userDetails = await GraphHelper.GetUserDetailsAsync(result.AccessToken);
 
@@ -115,7 +118,7 @@ namespace graph_tutorial
                 notification.HandleResponse();
                 notification.Response.Redirect($"/Home/Error?message={message}&debug={ex.Message}");
             }
-            catch(Microsoft.Graph.ServiceException ex)
+            catch (Microsoft.Graph.ServiceException ex)
             {
                 string message = "GetUserDetailsAsync threw an exception";
                 notification.HandleResponse();

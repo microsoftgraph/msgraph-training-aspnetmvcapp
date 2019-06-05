@@ -1,25 +1,21 @@
-﻿// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information.
-using graph_tutorial.TokenStorage;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 using Microsoft.Graph;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using graph_tutorial.TokenStorage;
 using Microsoft.Identity.Client;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace graph_tutorial.Helpers
 {
     public static class GraphHelper
     {
-        // Load configuration settings from PrivateSettings.config
-        private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
-        private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
-        private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
-        private static string graphScopes = ConfigurationManager.AppSettings["ida:AppScopes"];
-
         public static async Task<User> GetUserDetailsAsync(string accessToken)
         {
             var graphClient = new GraphServiceClient(
@@ -32,6 +28,12 @@ namespace graph_tutorial.Helpers
 
             return await graphClient.Me.Request().GetAsync();
         }
+
+        // Load configuration settings from PrivateSettings.config
+        private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
+        private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
+        private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
+        private static string graphScopes = ConfigurationManager.AppSettings["ida:AppScopes"];
 
         public static async Task<IEnumerable<Event>> GetEventsAsync()
         {
@@ -51,21 +53,22 @@ namespace graph_tutorial.Helpers
                 new DelegateAuthenticationProvider(
                     async (requestMessage) =>
                     {
-                        // Get the signed in user's id and create a token cache
-                        string signedInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
-                        SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId,
-                            new HttpContextWrapper(HttpContext.Current));
+                        var idClient = ConfidentialClientApplicationBuilder.Create(appId)
+                            .WithRedirectUri(redirectUri)
+                            .WithClientSecret(appSecret)
+                            .Build();
 
-                        var idClient = new ConfidentialClientApplication(
-                            appId, redirectUri, new ClientCredential(appSecret),
-                            tokenStore.GetMsalCacheInstance(), null);
+                        string signedInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
+                        var tokenStore = new SessionTokenStore(signedInUserId, HttpContext.Current);
+                        tokenStore.Initialize(idClient.UserTokenCache);
 
                         var accounts = await idClient.GetAccountsAsync();
 
-                        // By calling this here, the token can be refreshed
-                        // if it's expired right before the Graph call is made
-                        var result = await idClient.AcquireTokenSilentAsync(
-                            graphScopes.Split(' '), accounts.FirstOrDefault());
+                // By calling this here, the token can be refreshed
+                // if it's expired right before the Graph call is made
+                var scopes = graphScopes.Split(' ');
+                        var result = await idClient.AcquireTokenSilent(scopes, accounts.FirstOrDefault())
+                            .ExecuteAsync();
 
                         requestMessage.Headers.Authorization =
                             new AuthenticationHeaderValue("Bearer", result.AccessToken);
