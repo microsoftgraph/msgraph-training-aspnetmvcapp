@@ -64,9 +64,9 @@ namespace graph_tutorial.Helpers
 
                         var accounts = await idClient.GetAccountsAsync();
 
-                        // By calling this here, the token can be refreshed
-                        // if it's expired right before the Graph call is made
-                        var scopes = graphScopes.Split(' ');
+                // By calling this here, the token can be refreshed
+                // if it's expired right before the Graph call is made
+                var scopes = graphScopes.Split(' ');
                         var result = await idClient.AcquireTokenSilent(scopes, accounts.FirstOrDefault())
                             .ExecuteAsync();
 
