@@ -1,6 +1,9 @@
-﻿// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using System.Threading;
 using System.Web;
 
@@ -17,29 +20,28 @@ namespace graph_tutorial.TokenStorage
     // Adapted from https://github.com/Azure-Samples/active-directory-dotnet-webapp-openidconnect-v2
     public class SessionTokenStore
     {
-        private static ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        private static readonly ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+
         private readonly string userId = string.Empty;
         private readonly string cacheId = string.Empty;
         private readonly string cachedUserId = string.Empty;
-        private HttpContextBase httpContext = null;
+        private HttpContext httpContext = null;
+        private ITokenCache tokenCache;
 
-        TokenCache tokenCache = new TokenCache();
-
-        public SessionTokenStore(string userId, HttpContextBase httpContext)
+        public SessionTokenStore(string userId, HttpContext httpcontext)
         {
             this.userId = userId;
-            cacheId = $"{userId}_TokenCache";
-            cachedUserId = $"{userId}_UserCache";
-            this.httpContext = httpContext;
-            Load();
+            this.cacheId = $"{userId}_TokenCache";
+            this.cachedUserId = $"{userId}_UserCache";
+            this.httpContext = httpcontext;
         }
 
-        public TokenCache GetMsalCacheInstance()
+        public void Initialize(ITokenCache tokenCache)
         {
-            tokenCache.SetBeforeAccess(BeforeAccessNotification);
-            tokenCache.SetAfterAccess(AfterAccessNotification);
+            this.tokenCache = tokenCache;
+            this.tokenCache.SetBeforeAccess(BeforeAccessNotification);
+            this.tokenCache.SetAfterAccess(AfterAccessNotification);
             Load();
-            return tokenCache;
         }
 
         public bool HasData()
@@ -55,28 +57,24 @@ namespace graph_tutorial.TokenStorage
         private void Load()
         {
             sessionLock.EnterReadLock();
-            tokenCache.Deserialize((byte[])httpContext.Session[cacheId]);
+            tokenCache.DeserializeMsalV3((byte[])httpContext.Session[cacheId]);
             sessionLock.ExitReadLock();
         }
 
         private void Persist()
         {
             sessionLock.EnterReadLock();
-            httpContext.Session[cacheId] = tokenCache.Serialize();
+            httpContext.Session[cacheId] = tokenCache.SerializeMsalV3();
             sessionLock.ExitReadLock();
         }
 
-        // Triggered right before MSAL needs to access the cache.
         private void BeforeAccessNotification(TokenCacheNotificationArgs args)
         {
-            // Reload the cache from the persistent store in case it changed since the last access.
             Load();
         }
 
-        // Triggered right after MSAL accessed the cache.
         private void AfterAccessNotification(TokenCacheNotificationArgs args)
         {
-            // if the access operation resulted in a cache update
             if (args.HasStateChanged)
             {
                 Persist();
