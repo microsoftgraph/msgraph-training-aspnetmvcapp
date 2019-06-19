@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
-In this demo you will incorporate the Microsoft Graph into the application. For this application, you will use the [Microsoft Graph Client Library for .NET](https://github.com/microsoftgraph/msgraph-sdk-dotnet) to make calls to Microsoft Graph.
+In this demo you will incorporate Microsoft Graph into the application. For this application, you will use the [Microsoft Graph Client Library for .NET](https://github.com/microsoftgraph/msgraph-sdk-dotnet) to make calls to Microsoft Graph.
 
 ## Get calendar events from Outlook
 
@@ -68,17 +68,16 @@ Start by extending the `GraphHelper` class you created in the last module.
     }
     ```
 
-    Consider what this code is doing.
+    > [!NOTE]
+    > Consider what this code is doing.
+    >
+    > - The `GetAuthenticatedClient` function initializes a `GraphServiceClient` with an authentication provider that calls `AcquireTokenSilent`.
+    > - In the `GetEventsAsync` function:
+    >   - The URL that will be called is `/v1.0/me/events`.
+    >   - The `Select` function limits the fields returned for each events to just those the view will actually use.
+    >   - The `OrderBy` function sorts the results by the date and time they were created, with the most recent item being first.
 
-    - The `GetAuthenticatedClient` function initializes a `GraphServiceClient` with an authentication provider that calls `AcquireTokenSilent`.
-    - In the `GetEventsAsync` function:
-      - The URL that will be called is `/v1.0/me/events`.
-      - The `Select` function limits the fields returned for each events to just those the view will actually use.
-      - The `OrderBy` function sorts the results by the date and time they were created, with the most recent item being first.
-
-Now create a controller for the calendar views.
-
-1. Right-click the **Controllers** folder in Solution Explorer and choose **Add > Controller...**. Choose **MVC 5 Controller - Empty** and choose **Add**. Name the controller `CalendarController` and choose **Add**. Replace the entire contents of the new file with the following code.
+1. Create a controller for the calendar views. Right-click the **Controllers** folder in Solution Explorer and choose **Add > Controller...**. Choose **MVC 5 Controller - Empty** and choose **Add**. Name the controller `CalendarController` and choose **Add**. Replace the entire contents of the new file with the following code.
 
     ```cs
     using System;

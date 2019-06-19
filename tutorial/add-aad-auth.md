@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
-In this exercise you will extend the application from the previous exercise to support authentication with Azure AD. This is required to obtain the necessary OAuth access token to call the Microsoft Graph. In this step you will integrate the OWIN middleware and the [Microsoft Authentication Library](https://www.nuget.org/packages/Microsoft.Identity.Client/) library into the application.
+In this exercise you will extend the application from the previous exercise to support authentication with Azure AD. This is required to obtain the necessary OAuth access token to call the Microsoft Graph API. In this step you will integrate the OWIN middleware and the [Microsoft Authentication Library](https://www.nuget.org/packages/Microsoft.Identity.Client/) library into the application.
 
 1. Right-click the **graph-tutorial** project in Solution Explorer and choose **Add > New Item...**. Choose **Web Configuration File**, name the file `PrivateSettings.config` and choose **Add**. Replace its entire contents with the following code.
 
@@ -219,7 +219,7 @@ Start by initializing the OWIN middleware to use Azure AD authentication for the
 
 ### Get user details
 
-Once the user is logged in, you can get their information from the Microsoft Graph.
+Once the user is logged in, you can get their information from Microsoft Graph.
 
 1. Right-click the **graph-tutorial** folder in Solution Explorer, and choose **Add > New Folder**. Name the folder `Helpers`.
 
@@ -282,7 +282,11 @@ Once the user is logged in, you can get their information from the Microsoft Gra
 
 ## Storing the tokens
 
-Now that you can get tokens, it's time to implement a way to store them in the app. Since this is a sample app, we'll use the session to store the tokens. A real-world app would use a more reliable secure storage solution, like a database.
+Now that you can get tokens, it's time to implement a way to store them in the app. Since this is a sample app, you will use the session to store the tokens. A real-world app would use a more reliable secure storage solution, like a database. In this section, you will:
+
+- Implement a token store class to serialize and store the MSAL token cache and the user's details in the user session.
+- Update the authentication code to use the token store class.
+- Update the base controller class to expose the stored user details to all views in the application.
 
 1. Right-click the **graph-tutorial** folder in Solution Explorer, and choose **Add > New Folder**. Name the folder `TokenStorage`.
 
@@ -387,10 +391,6 @@ Now that you can get tokens, it's time to implement a way to store them in the a
     }
     ```
 
-    This code creates a `SessionTokenStore` class that works with the MSAL library's `TokenCache` class. Most of the code here involves serializing and deserializing the `TokenCache` to the session. It also provides a class and methods to serialize and deserialize the user's details to the session.
-
-Update the `OnAuthorizationCodeReceivedAsync` function to create an instance of the `SessionTokenStore` class and provide that to the constructor for the `ConfidentialClientApplication` object. That will cause MSAL to use your cache implementation for storing tokens.
-
 1. Add the following `using` statement to the top of the `App_Start/Startup.Auth.cs` file.
 
     ```cs
@@ -446,15 +446,14 @@ Update the `OnAuthorizationCodeReceivedAsync` function to create an instance of 
     }
     ```
 
-    To summarize the changes:
+    > [!NOTE]
+    > The changes in this new version of `OnAuthorizationCodeReceivedAsync` do the following:
+    >
+    > - The code now wraps the `ConfidentialClientApplication`'s default user token cache with the `SessionTokenStore` class. The MSAL library will handle the logic of storing the tokens and refreshing it when needed.
+    > - The code now passes the user details obtained from Microsoft Graph to the `SessionTokenStore` object to store in the session.
+    > - On success, the code no longer redirects, it just returns. This allows the OWIN middleware to complete the authentication process.
 
-    - The code now replaces the `ConfidentialClientApplication`'s default user token cache with an instance of the  `SessionTokenStore`. The MSAL library will handle the logic of storing the tokens and refreshing it when needed.
-    - The code now passes the user details obtained from Microsoft Graph to the `SessionTokenStore` object to store in the session.
-    - On success, the code no longer redirects, it just returns. This allows the OWIN middleware to complete the authentication process.
-
-Since the token cache is stored in the session, update the `SignOut` action in `Controllers/AccountController.cs` to clear the token store before signing out.
-
-1. Add the following `using` statement to the top of the file.
+1. Update the `SignOut` action to clear the token store before signing out. Add the following `using` statement to the top of `Controllers/AccountController.cs`.
 
     ```cs
     using graph_tutorial.TokenStorage;
@@ -479,8 +478,6 @@ Since the token cache is stored in the session, update the `SignOut` action in `
         return RedirectToAction("Index", "Home");
     }
     ```
-
-The cached user details are something that every view in the application will need, so update the `BaseController` class to load this information from the session.
 
 1. Open `Controllers/BaseController.cs` and add the following `using` statements to the top of the file.
 
@@ -530,7 +527,7 @@ The cached user details are something that every view in the application will ne
 
 ## Refreshing tokens
 
-At this point your application has an access token, which is sent in the `Authorization` header of API calls. This is the token that allows the app to access the Microsoft Graph on the user's behalf.
+At this point your application has an access token, which is sent in the `Authorization` header of API calls. This is the token that allows the app to access Microsoft Graph on the user's behalf.
 
 However, this token is short-lived. The token expires an hour after it is issued. This is where the refresh token becomes useful. The refresh token allows the app to request a new access token without requiring the user to sign in again.
 
