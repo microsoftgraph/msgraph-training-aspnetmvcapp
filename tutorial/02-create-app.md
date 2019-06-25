@@ -41,9 +41,9 @@ Before moving on, update the `bootstrap` NuGet package, and install some additio
 
 In this section you will create the basic structure of the application.
 
-1. Create a basic OWIN startup class. Right-click the `graph-tutorial` folder in Solution Explorer and choose **Add > New Item**. Choose the **OWIN Startup Class** template, name the file `Startup.cs`, and choose **Add**.
+1. Create a basic OWIN startup class. Right-click the `graph-tutorial` folder in Solution Explorer and select **Add > New Item**. Choose the **OWIN Startup Class** template, name the file `Startup.cs`, and select **Add**.
 
-1. Right-click the **Models** folder in Solution Explorer and choose **Add > Class...**. Name the class `Alert` and choose **Add**. Add the following code in `Alert.cs`. You'll use this class to flash error messages in the app's views.
+1. Right-click the **Models** folder in Solution Explorer and select **Add > Class...**. Name the class `Alert` and select **Add**. Add the following code in `Alert.cs`. You'll use this class to flash error messages in the app's views.
 
     ```cs
     namespace graph_tutorial.Models
@@ -198,7 +198,7 @@ In this section you will create the basic structure of the application.
     </div>
     ```
 
-1. Right-click the **Controllers** folder in Solution Explorer and choose **Add > Controller...**. Choose **MVC 5 Controller - Empty** and choose **Add**. Name the controller `BaseController` and choose **Add**. Replace the contents of `BaseController.cs` with the following code.
+1. Right-click the **Controllers** folder in Solution Explorer and select **Add > Controller...**. Choose **MVC 5 Controller - Empty** and select **Add**. Name the controller `BaseController` and select **Add**. Replace the contents of `BaseController.cs` with the following code.
 
     ```cs
     using graph_tutorial.Models;

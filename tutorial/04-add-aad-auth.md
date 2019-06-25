@@ -2,7 +2,7 @@
 
 In this exercise you will extend the application from the previous exercise to support authentication with Azure AD. This is required to obtain the necessary OAuth access token to call the Microsoft Graph API. In this step you will integrate the OWIN middleware and the [Microsoft Authentication Library](https://www.nuget.org/packages/Microsoft.Identity.Client/) library into the application.
 
-1. Right-click the **graph-tutorial** project in Solution Explorer and choose **Add > New Item...**. Choose **Web Configuration File**, name the file `PrivateSettings.config` and choose **Add**. Replace its entire contents with the following code.
+1. Right-click the **graph-tutorial** project in Solution Explorer and select **Add > New Item...**. Choose **Web Configuration File**, name the file `PrivateSettings.config` and select **Add**. Replace its entire contents with the following code.
 
     ```xml
     <appSettings>
@@ -28,7 +28,7 @@ In this exercise you will extend the application from the previous exercise to s
 
 Start by initializing the OWIN middleware to use Azure AD authentication for the app.
 
-1. Right-click the **App_Start** folder in Solution Explorer and choose **Add > Class...**. Name the file `Startup.Auth.cs` and choose **Add**. Replace the entire contents with the following code.
+1. Right-click the **App_Start** folder in Solution Explorer and select **Add > Class...**. Name the file `Startup.Auth.cs` and select **Add**. Replace the entire contents with the following code.
 
     ```cs
     using Microsoft.Identity.Client;
@@ -174,7 +174,7 @@ Start by initializing the OWIN middleware to use Azure AD authentication for the
     }
     ```
 
-1. Add a controller to handle sign-in. Right-click the **Controllers** folder in Solution Explorer and choose **Add > Controller...**. Choose **MVC 5 Controller - Empty** and choose **Add**. Name the controller `AccountController` and choose **Add**. Replace the entire contents of the file with the following code.
+1. Add a controller to handle sign-in. Right-click the **Controllers** folder in Solution Explorer and select **Add > Controller...**. Choose **MVC 5 Controller - Empty** and select **Add**. Name the controller `AccountController` and select **Add**. Replace the entire contents of the file with the following code.
 
     ```cs
     using Microsoft.Owin.Security;
@@ -221,9 +221,9 @@ Start by initializing the OWIN middleware to use Azure AD authentication for the
 
 Once the user is logged in, you can get their information from Microsoft Graph.
 
-1. Right-click the **graph-tutorial** folder in Solution Explorer, and choose **Add > New Folder**. Name the folder `Helpers`.
+1. Right-click the **graph-tutorial** folder in Solution Explorer, and select **Add > New Folder**. Name the folder `Helpers`.
 
-1. Right click this new folder and choose **Add > Class...**. Name the file `GraphHelper.cs` and choose **Add**. Replace the contents of this file with the following code.
+1. Right click this new folder and select **Add > Class...**. Name the file `GraphHelper.cs` and select **Add**. Replace the contents of this file with the following code.
 
     ```cs
     using Microsoft.Graph;
@@ -288,9 +288,9 @@ Now that you can get tokens, it's time to implement a way to store them in the a
 - Update the authentication code to use the token store class.
 - Update the base controller class to expose the stored user details to all views in the application.
 
-1. Right-click the **graph-tutorial** folder in Solution Explorer, and choose **Add > New Folder**. Name the folder `TokenStorage`.
+1. Right-click the **graph-tutorial** folder in Solution Explorer, and select **Add > New Folder**. Name the folder `TokenStorage`.
 
-1. Right click this new folder and choose **Add > Class...**. Name the file `SessionTokenStore.cs` and choose **Add**. Replace the contents of this file with the following code.
+1. Right click this new folder and select **Add > Class...**. Name the file `SessionTokenStore.cs` and select **Add**. Replace the contents of this file with the following code.
 
     ```cs
     using Microsoft.Identity.Client;

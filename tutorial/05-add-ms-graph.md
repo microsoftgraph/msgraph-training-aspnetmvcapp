@@ -77,7 +77,7 @@ Start by extending the `GraphHelper` class you created in the last module.
     >   - The `Select` function limits the fields returned for each events to just those the view will actually use.
     >   - The `OrderBy` function sorts the results by the date and time they were created, with the most recent item being first.
 
-1. Create a controller for the calendar views. Right-click the **Controllers** folder in Solution Explorer and choose **Add > Controller...**. Choose **MVC 5 Controller - Empty** and choose **Add**. Name the controller `CalendarController` and choose **Add**. Replace the entire contents of the new file with the following code.
+1. Create a controller for the calendar views. Right-click the **Controllers** folder in Solution Explorer and select **Add > Controller...**. Choose **MVC 5 Controller - Empty** and select **Add**. Name the controller `CalendarController` and select **Add**. Replace the entire contents of the new file with the following code.
 
     ```cs
     using System;
@@ -116,7 +116,7 @@ Start by extending the `GraphHelper` class you created in the last module.
 
 Now you can add a view to display the results in a more user-friendly manner.
 
-1. In Solution Explorer, right-click the **Views/Calendar** folder and choose **Add > View...**. Name the view `Index` and choose **Add**. Replace the entire contents of the new file with the following code.
+1. In Solution Explorer, right-click the **Views/Calendar** folder and select **Add > View...**. Name the view `Index` and select **Add**. Replace the entire contents of the new file with the following code.
 
     ```html
     @model IEnumerable<Microsoft.Graph.Event>
