@@ -1,17 +1,23 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
-Open Visual Studio, and select **File > New > Project**. In the **New Project** dialog, do the following:
+Start by creating an ASP.NET MVC project.
 
-1. Select **Templates > Visual C# > Web**.
-1. Select **ASP.NET Web Application (.NET Framework)**.
-1. Enter **graph-tutorial** for the Name of the project.
+1. Open Visual Studio, and select **Create a new project**.
 
-    ![Visual Studio 2017 create new project dialog](./images/vs-new-project-01.png)
+1. In the **Create new project** dialog, choose the **ASP.NET Web Application (.NET Framework)** option that uses C#, then select **Next**.
+
+    ![Visual Studio 2019 create new project dialog](./images/vs-create-new-project.png)
+
+1. Enter `graph-tutorial` in the **Project name** field and select **Create**.
+
+    ![Visual Studio 2019 configure new project dialog](./images/vs-configure-new-project.png)
 
     > [!NOTE]
     > Ensure that you enter the exact same name for the Visual Studio Project that is specified in these lab instructions. The Visual Studio Project name becomes part of the namespace in the code. The code inside these instructions depends on the namespace matching the Visual Studio Project name specified in these instructions. If you use a different project name the code will not compile unless you adjust all the namespaces to match the Visual Studio Project name you enter when you create the project.
 
-1. Select **OK**. In the **New ASP.NET Web Application Project** dialog, select **MVC** (under **ASP.NET 4.7.2 Templates**) and select **OK**.
+1. Choose **MVC** and select **Create**.
+
+    ![Visual Studio 2019 create new ASP.NET web application dialog](./images/vs-create-new-asp-app.png)
 
 1. Press **F5** or select **Debug > Start Debugging**. If everything is working, your default browser should open and display a default ASP.NET page.
 
@@ -33,7 +39,7 @@ Before moving on, update the `bootstrap` NuGet package, and install some additio
     Install-Package Microsoft.Owin.Host.SystemWeb
     Install-Package Microsoft.Owin.Security.OpenIdConnect
     Install-Package Microsoft.Owin.Security.Cookies
-    Install-Package Microsoft.Identity.Client -Version 3.0.8
+    Install-Package Microsoft.Identity.Client -Version 4.0.0
     Install-Package Microsoft.Graph -Version 1.15.0
     ```
 
@@ -43,11 +49,12 @@ In this section you will create the basic structure of the application.
 
 1. Create a basic OWIN startup class. Right-click the `graph-tutorial` folder in Solution Explorer and select **Add > New Item**. Choose the **OWIN Startup Class** template, name the file `Startup.cs`, and select **Add**.
 
-1. Right-click the **Models** folder in Solution Explorer and select **Add > Class...**. Name the class `Alert` and select **Add**. Add the following code in `Alert.cs`. You'll use this class to flash error messages in the app's views.
+1. Right-click the **Models** folder in Solution Explorer and select **Add > Class...**. Name the class `Alert` and select **Add**. Replace the entire contents of `Alert.cs` with the following code.
 
     ```cs
     namespace graph_tutorial.Models
     {
+        // Used to flash error messages in the app's views.
         public class Alert
         {
             public const string AlertKey = "TempDataAlerts";
@@ -160,7 +167,8 @@ In this section you will create the basic structure of the application.
     </html>
     ```
 
-    This code adds [Bootstrap](https://getbootstrap.com/) for simple styling, and [Font Awesome](https://fontawesome.com/) for some simple icons. It also defines a global layout with a nav bar, and uses the `Alert` class to display any alerts.
+    > [!NOTE]
+    > This code adds [Bootstrap](https://getbootstrap.com/) for simple styling, and [Font Awesome](https://fontawesome.com/) for some simple icons. It also defines a global layout with a nav bar, and uses the `Alert` class to display any alerts.
 
 1. Open `Content/Site.css` and replace its entire contents with the following code.
 
@@ -226,8 +234,6 @@ In this section you will create the basic structure of the application.
         }
     }
     ```
-
-    Any controller can inherit from this base controller class to gain access to the `Flash` function. Update the `HomeController` class to inherit from `BaseController`.
 
 1. Open `Controllers/HomeController.cs` and change the `public class HomeController : Controller` line to:
 

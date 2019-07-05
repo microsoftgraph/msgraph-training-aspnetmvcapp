@@ -16,6 +16,12 @@ namespace graph_tutorial.Helpers
 {
     public static class GraphHelper
     {
+        // Load configuration settings from PrivateSettings.config
+        private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
+        private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
+        private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
+        private static string graphScopes = ConfigurationManager.AppSettings["ida:AppScopes"];
+
         public static async Task<User> GetUserDetailsAsync(string accessToken)
         {
             var graphClient = new GraphServiceClient(
@@ -28,12 +34,6 @@ namespace graph_tutorial.Helpers
 
             return await graphClient.Me.Request().GetAsync();
         }
-
-        // Load configuration settings from PrivateSettings.config
-        private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
-        private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
-        private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
-        private static string graphScopes = ConfigurationManager.AppSettings["ida:AppScopes"];
 
         public static async Task<IEnumerable<Event>> GetEventsAsync()
         {
@@ -58,15 +58,14 @@ namespace graph_tutorial.Helpers
                             .WithClientSecret(appSecret)
                             .Build();
 
-                        string signedInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
-                        var tokenStore = new SessionTokenStore(signedInUserId, HttpContext.Current);
-                        tokenStore.Initialize(idClient.UserTokenCache);
+                        var tokenStore = new SessionTokenStore(idClient.UserTokenCache, 
+                            HttpContext.Current, ClaimsPrincipal.Current);
 
                         var accounts = await idClient.GetAccountsAsync();
 
-                // By calling this here, the token can be refreshed
-                // if it's expired right before the Graph call is made
-                var scopes = graphScopes.Split(' ');
+                    // By calling this here, the token can be refreshed
+                    // if it's expired right before the Graph call is made
+                    var scopes = graphScopes.Split(' ');
                         var result = await idClient.AcquireTokenSilent(scopes, accounts.FirstOrDefault())
                             .ExecuteAsync();
 
