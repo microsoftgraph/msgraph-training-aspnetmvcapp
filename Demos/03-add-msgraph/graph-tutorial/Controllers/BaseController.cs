@@ -2,12 +2,12 @@
 // Licensed under the MIT license.
 
 using graph_tutorial.Models;
-using System.Collections.Generic;
-using System.Web.Mvc;
 using graph_tutorial.TokenStorage;
+using Microsoft.Owin.Security.Cookies;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Web;
-using Microsoft.Owin.Security.Cookies;
+using System.Web.Mvc;
 
 namespace graph_tutorial.Controllers
 {
@@ -32,9 +32,9 @@ namespace graph_tutorial.Controllers
         {
             if (Request.IsAuthenticated)
             {
-                // Get the signed in user's id and create a token cache
-                string signedInUserId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
-                SessionTokenStore tokenStore = new SessionTokenStore(signedInUserId, System.Web.HttpContext.Current);
+                // Get the user's token cache
+                var tokenStore = new SessionTokenStore(null, 
+                    System.Web.HttpContext.Current, ClaimsPrincipal.Current);
 
                 if (tokenStore.HasData())
                 {

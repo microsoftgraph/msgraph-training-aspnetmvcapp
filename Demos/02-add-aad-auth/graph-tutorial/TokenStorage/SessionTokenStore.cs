@@ -17,83 +17,117 @@ namespace graph_tutorial.TokenStorage
         public string Avatar { get; set; }
     }
 
-    // Adapted from https://github.com/Azure-Samples/active-directory-dotnet-webapp-openidconnect-v2
     public class SessionTokenStore
     {
         private static readonly ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
-        private readonly string userId = string.Empty;
-        private readonly string cacheId = string.Empty;
-        private readonly string cachedUserId = string.Empty;
         private HttpContext httpContext = null;
-        private ITokenCache tokenCache;
+        private string tokenCacheKey = string.Empty;
+        private string userCacheKey = string.Empty;
 
-        public SessionTokenStore(string userId, HttpContext httpcontext)
+        public SessionTokenStore(ITokenCache tokenCache, HttpContext context, ClaimsPrincipal user)
         {
-            this.userId = userId;
-            this.cacheId = $"{userId}_TokenCache";
-            this.cachedUserId = $"{userId}_UserCache";
-            this.httpContext = httpcontext;
-        }
+            httpContext = context;
 
-        public void Initialize(ITokenCache tokenCache)
-        {
-            this.tokenCache = tokenCache;
-            this.tokenCache.SetBeforeAccess(BeforeAccessNotification);
-            this.tokenCache.SetAfterAccess(AfterAccessNotification);
-            Load();
+            if (tokenCache != null)
+            {
+                tokenCache.SetBeforeAccess(BeforeAccessNotification);
+                tokenCache.SetAfterAccess(AfterAccessNotification);
+            }
+
+            var userId = GetUsersUniqueId(user);
+            tokenCacheKey = $"{userId}_TokenCache";
+            userCacheKey = $"{userId}_UserCache";
         }
 
         public bool HasData()
         {
-            return (httpContext.Session[cacheId] != null && ((byte[])httpContext.Session[cacheId]).Length > 0);
+            return (httpContext.Session[tokenCacheKey] != null && 
+                ((byte[])httpContext.Session[tokenCacheKey]).Length > 0);
         }
 
         public void Clear()
         {
-            httpContext.Session.Remove(cacheId);
-        }
+            sessionLock.EnterWriteLock();
 
-        private void Load()
-        {
-            sessionLock.EnterReadLock();
-            tokenCache.DeserializeMsalV3((byte[])httpContext.Session[cacheId]);
-            sessionLock.ExitReadLock();
-        }
-
-        private void Persist()
-        {
-            sessionLock.EnterReadLock();
-            httpContext.Session[cacheId] = tokenCache.SerializeMsalV3();
-            sessionLock.ExitReadLock();
+            try
+            {
+                httpContext.Session.Remove(tokenCacheKey);
+            }
+            finally
+            {
+                sessionLock.ExitWriteLock();
+            }
         }
 
         private void BeforeAccessNotification(TokenCacheNotificationArgs args)
         {
-            Load();
+            sessionLock.EnterReadLock();
+
+            try
+            {
+                // Load the cache from the session
+                args.TokenCache.DeserializeMsalV3((byte[])httpContext.Session[tokenCacheKey]);
+            }
+            finally
+            {
+                sessionLock.ExitReadLock();
+            }
         }
 
         private void AfterAccessNotification(TokenCacheNotificationArgs args)
         {
             if (args.HasStateChanged)
             {
-                Persist();
+                sessionLock.EnterWriteLock();
+
+                try
+                {
+                    // Store the serialized cache in the session
+                    httpContext.Session[tokenCacheKey] = args.TokenCache.SerializeMsalV3();
+                }
+                finally
+                {
+                    sessionLock.ExitWriteLock();
+                }
             }
         }
 
         public void SaveUserDetails(CachedUser user)
         {
-            sessionLock.EnterReadLock();
-            httpContext.Session[cachedUserId] = JsonConvert.SerializeObject(user);
-            sessionLock.ExitReadLock();
+
+            sessionLock.EnterWriteLock();
+            httpContext.Session[userCacheKey] = JsonConvert.SerializeObject(user);
+            sessionLock.ExitWriteLock();
         }
 
         public CachedUser GetUserDetails()
         {
             sessionLock.EnterReadLock();
-            var cachedUser = JsonConvert.DeserializeObject<CachedUser>((string)httpContext.Session[cachedUserId]);
+            var cachedUser = JsonConvert.DeserializeObject<CachedUser>((string)httpContext.Session[userCacheKey]);
             sessionLock.ExitReadLock();
             return cachedUser;
+        }
+
+        private string GetUsersUniqueId(ClaimsPrincipal user)
+        {
+            // Combine the user's object ID with their tenant ID
+
+            if (user != null)
+            {
+                var userObjectId = user.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value ??
+                    user.FindFirst("oid").Value;
+
+                var userTenantId = user.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value ??
+                    user.FindFirst("tid").Value;
+
+                if (!string.IsNullOrEmpty(userObjectId) && !string.IsNullOrEmpty(userTenantId))
+                {
+                    return $"{userObjectId}.{userTenantId}";
+                }
+            }
+
+            return null;
         }
     }
 }
