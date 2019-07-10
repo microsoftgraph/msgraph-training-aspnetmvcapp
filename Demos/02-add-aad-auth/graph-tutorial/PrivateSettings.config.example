@@ -4,8 +4,8 @@
      Licensed under the MIT License. -->
 
 <appSettings>
-    <add key="ida:AppID" value="YOUR APP ID" />
-    <add key="ida:AppSecret" value="YOUR APP PASSWORD" />
+    <add key="ida:AppID" value="YOUR_APP_ID" />
+    <add key="ida:AppSecret" value="YOUR_APP_PASSWORD" />
     <add key="ida:RedirectUri" value="https://localhost:44375/" />
     <add key="ida:AppScopes" value="User.Read Calendars.Read" />
 </appSettings>
