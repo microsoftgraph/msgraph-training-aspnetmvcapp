@@ -414,7 +414,7 @@ Now that you can get tokens, it's time to implement a way to store them in the a
                     var userObjectId = user.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value ??
                         user.FindFirst("oid").Value;
 
-                    var userTenantId = user.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value ??
+                    var userTenantId = user.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid").Value ??
                         user.FindFirst("tid").Value;
 
                     if (!string.IsNullOrEmpty(userObjectId) && !string.IsNullOrEmpty(userTenantId))
