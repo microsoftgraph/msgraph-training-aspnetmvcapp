@@ -429,10 +429,11 @@ Now that you can get tokens, it's time to implement a way to store them in the a
     }
     ```
 
-1. Add the following `using` statement to the top of the `App_Start/Startup.Auth.cs` file.
+1. Add the following `using` statements to the top of the `App_Start/Startup.Auth.cs` file.
 
     ```cs
     using graph_tutorial.TokenStorage;
+    using System.Security.Claims;
     ```
 
 1. Replace the existing `OnAuthorizationCodeReceivedAsync` function with the following.
