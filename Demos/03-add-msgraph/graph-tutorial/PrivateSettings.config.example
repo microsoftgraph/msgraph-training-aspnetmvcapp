@@ -1,0 +1,6 @@
+﻿<appSettings>
+    <add key="ida:AppID" value="YOUR APP ID" />
+    <add key="ida:AppSecret" value="YOUR APP PASSWORD" />
+    <add key="ida:RedirectUri" value="https://localhost:PORT/" />
+    <add key="ida:AppScopes" value="User.Read Calendars.Read" />
+</appSettings>
