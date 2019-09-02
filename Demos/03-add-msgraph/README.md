@@ -4,7 +4,7 @@
 
 To run the completed project in this folder, you need the following:
 
-- [Visual Studio](https://visualstudio.microsoft.com/vs/) installed on your development machine. If you do not have Visual Studio, visit the previous link for download options. (**Note:** This tutorial was written with Visual Studio 2019 version 16.1.4. The steps in this guide may work with other versions, but that has not been tested.)
+- [Visual Studio](https://visualstudio.microsoft.com/vs/) installed on your development machine. If you do not have Visual Studio, visit the previous link for download options. (**Note:** This tutorial was written with Visual Studio 2019 version 16.2.3. The steps in this guide may work with other versions, but that has not been tested.)
 - Either a personal Microsoft account with a mailbox on Outlook.com, or a Microsoft work or school account.
 
 If you don't have a Microsoft account, there are a couple of options to get a free account:
@@ -57,6 +57,7 @@ If you don't have a Microsoft account, there are a couple of options to get a fr
 1. Edit the `PrivateSettings.config` file and make the following changes.
     1. Replace `YOUR_APP_ID_HERE` with the **Application Id** you got from the App Registration Portal.
     1. Replace `YOUR_APP_PASSWORD_HERE` with the **Application Secret** you got from the App Registration Portal.
+    1. Replace `PORT` with the port number that is part of your applications's SSL URL.
 1. Open `graph-tutorial.sln` in Visual Studio. In Solution Explorer, right-click the **graph-tutorial** solution and choose **Restore NuGet Packages**.
 
 ## Run the sample
