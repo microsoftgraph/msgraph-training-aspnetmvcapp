@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using System.Security.Claims;
@@ -118,7 +121,7 @@ namespace graph_tutorial.TokenStorage
                 var userObjectId = user.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value ??
                     user.FindFirst("oid").Value;
 
-                var userTenantId = user.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid").Value ??
+                var userTenantId = user.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value ??
                     user.FindFirst("tid").Value;
 
                 if (!string.IsNullOrEmpty(userObjectId) && !string.IsNullOrEmpty(userTenantId))
