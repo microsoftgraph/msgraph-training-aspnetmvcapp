@@ -8,4 +8,3 @@ The version of the project in this directory reflects completing the tutorial up
 > 1. Edit the `PrivateSettings.config` file and make the following changes.
 >     1. Replace `YOUR APP ID HERE` with the **Application Id** you got from the App Registration Portal.
 >     1. Replace `YOUR APP PASSWORD HERE` with the password you got from the App Registration Portal.
->     1. Replace `PORT` with the port number that is part of your applications's SSL URL.
