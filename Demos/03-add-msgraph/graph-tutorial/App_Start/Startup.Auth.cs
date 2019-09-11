@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+using graph_tutorial.Helpers;
+using graph_tutorial.TokenStorage;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -10,11 +12,9 @@ using Microsoft.Owin.Security.Notifications;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
 using System.Configuration;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
-using graph_tutorial.Helpers;
-using graph_tutorial.TokenStorage;
-using System.Security.Claims;
 
 namespace graph_tutorial
 {
@@ -42,23 +42,23 @@ namespace graph_tutorial
                   PostLogoutRedirectUri = redirectUri,
                   TokenValidationParameters = new TokenValidationParameters
                   {
-                      // For demo purposes only, see below
-                      ValidateIssuer = false
+                          // For demo purposes only, see below
+                          ValidateIssuer = false
 
-                      // In a real multi-tenant app, you would add logic to determine whether the
-                      // issuer was from an authorized tenant
-                      //ValidateIssuer = true,
-                      //IssuerValidator = (issuer, token, tvp) =>
-                      //{
-                      //  if (MyCustomTenantValidation(issuer))
-                      //  {
-                      //    return issuer;
-                      //  }
-                      //  else
-                      //  {
-                      //    throw new SecurityTokenInvalidIssuerException("Invalid issuer");
-                      //  }
-                      //}
+                          // In a real multi-tenant app, you would add logic to determine whether the
+                          // issuer was from an authorized tenant
+                          //ValidateIssuer = true,
+                          //IssuerValidator = (issuer, token, tvp) =>
+                          //{
+                          //  if (MyCustomTenantValidation(issuer))
+                          //  {
+                          //    return issuer;
+                          //  }
+                          //  else
+                          //  {
+                          //    throw new SecurityTokenInvalidIssuerException("Invalid issuer");
+                          //  }
+                          //}
                   },
                   Notifications = new OpenIdConnectAuthenticationNotifications
                   {
