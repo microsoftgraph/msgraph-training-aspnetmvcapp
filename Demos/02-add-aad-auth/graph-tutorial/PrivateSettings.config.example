@@ -1,4 +1,5 @@
-﻿<appSettings>
+﻿<?xml version="1.0"?>
+<appSettings>
     <add key="ida:AppID" value="YOUR APP ID" />
     <add key="ida:AppSecret" value="YOUR APP PASSWORD" />
     <add key="ida:RedirectUri" value="https://localhost:44375/" />
