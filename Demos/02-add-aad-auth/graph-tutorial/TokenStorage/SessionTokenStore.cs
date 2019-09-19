@@ -42,7 +42,7 @@ namespace graph_tutorial.TokenStorage
 
         public bool HasData()
         {
-            return (httpContext.Session[tokenCacheKey] != null && 
+            return (httpContext.Session[tokenCacheKey] != null &&
                 ((byte[])httpContext.Session[tokenCacheKey]).Length > 0);
         }
 
@@ -118,7 +118,7 @@ namespace graph_tutorial.TokenStorage
                 var userObjectId = user.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value ??
                     user.FindFirst("oid").Value;
 
-                var userTenantId = user.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value ??
+                var userTenantId = user.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid").Value ??
                     user.FindFirst("tid").Value;
 
                 if (!string.IsNullOrEmpty(userObjectId) && !string.IsNullOrEmpty(userTenantId))

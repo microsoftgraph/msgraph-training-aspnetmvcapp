@@ -4,7 +4,7 @@
 
 To run the completed project in this folder, you need the following:
 
-- [Visual Studio](https://visualstudio.microsoft.com/vs/) installed on your development machine. If you do not have Visual Studio, visit the previous link for download options. (**Note:** This tutorial was written with Visual Studio 2019 version 16.1.4. The steps in this guide may work with other versions, but that has not been tested.)
+- [Visual Studio](https://visualstudio.microsoft.com/vs/) installed on your development machine. If you do not have Visual Studio, visit the previous link for download options. (**Note:** This tutorial was written with Visual Studio 2019 version 16.2.3. The steps in this guide may work with other versions, but that has not been tested.)
 - Either a personal Microsoft account with a mailbox on Outlook.com, or a Microsoft work or school account.
 
 If you don't have a Microsoft account, there are a couple of options to get a free account:

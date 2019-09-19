@@ -39,8 +39,8 @@ Before moving on, update the `bootstrap` NuGet package, and install some additio
     Install-Package Microsoft.Owin.Host.SystemWeb
     Install-Package Microsoft.Owin.Security.OpenIdConnect
     Install-Package Microsoft.Owin.Security.Cookies
-    Install-Package Microsoft.Identity.Client -Version 4.0.0
-    Install-Package Microsoft.Graph -Version 1.15.0
+    Install-Package Microsoft.Identity.Client -Version 4.3.1
+    Install-Package Microsoft.Graph -Version 1.17.0
     ```
 
 ## Design the app
