@@ -13,7 +13,7 @@ This tutorial teaches you how to build an ASP.NET MVC web app that uses the Micr
 Before you start this tutorial, you should have [Visual Studio](https://visualstudio.microsoft.com/vs/) installed on your development machine. If you do not have Visual Studio, visit the previous link for download options.
 
 > [!NOTE]
-> This tutorial was written with Visual Studio 2019 version 16.1.4. The steps in this guide may work with other versions, but that has not been tested.
+> This tutorial was written with Visual Studio 2019 version 16.3.10. The steps in this guide may work with other versions, but that has not been tested.
 
 ## Watch the tutorial
 
