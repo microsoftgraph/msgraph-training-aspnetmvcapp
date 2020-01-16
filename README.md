@@ -2,6 +2,8 @@
 
 This module will introduce you to working with the Microsoft Graph .NET SDK in creating an ASP.NET MVC web application to access data in Office 365.
 
+This module is based on the following Microsoft Learn module: [Build ASP.NET MVC web applications with the Microsoft Graph .NET SDK](https://docs.microsoft.com/learn/modules/msgraph-build-aspnetmvc-apps)
+
 ## Lab - Build MVC apps with the Microsoft Graph .NET SDK
 
 In this lab you will create an ASP.NET MVC application, configured with Azure Active Directory (Azure AD) for authentication & authorization, that accesses data in Office 365 using the Microsoft Graph .NET SDK.
@@ -39,6 +41,7 @@ This module has been recorded and is available in the Office Development YouTube
 
 | Version |        Date        |                       Comments                       |
 | ------- | ------------------ | ---------------------------------------------------- |
+| 1.12    | January 14, 2020   | Port module to MS Learn                              |
 | 1.11    | December 9, 2019   | 2020Q2 content refresh                               |
 | 1.10    | September 9, 2019  | 2020Q1 content refresh                               |
 | 1.9     | June 18, 2019      | Updated readme to refreshed screencast recording     |
