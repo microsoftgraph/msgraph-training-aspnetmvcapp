@@ -239,10 +239,11 @@ Once the user is logged in, you can get their information from Microsoft Graph.
             {
                 var graphClient = new GraphServiceClient(
                     new DelegateAuthenticationProvider(
-                        async (requestMessage) =>
+                        (requestMessage) =>
                         {
                             requestMessage.Headers.Authorization =
                                 new AuthenticationHeaderValue("Bearer", accessToken);
+                            return Task.FromResult(0);
                         }));
 
                 return await graphClient.Me.Request().GetAsync();
