@@ -30,17 +30,18 @@ This module has been recorded and is available in the Office Development YouTube
 
 ## Contributors
 
-| Roles                | Author(s)                                                                                     |
-| -------------------- | --------------------------------------------------------------------------------------------- |
-| Lab Manuals / Slides | Andrew Connell (Microsoft MVP, Voitanos) [@andrewconnell](//github.com/andrewconnell)         |
-| QA                   | Rob Windsor (Microsoft MVP, PAIT Group) [@rob-windsor](//github.com/rob-windsor)              |
-| QA                   | Julie Turner (Microsoft MVP, Sympraxis Consulting) [@juliemturner](//github.com/juliemturner) |
-| Sponsor / Support    | Yina Arenas (Microsoft) [@yinaa](//github.com/yinaa)                                          |
+|        Roles         |                                                   Author(s)                                                    |
+| -------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Lab / Slides / Demos | Andrew Connell (Microsoft MVP, [Voitanos](//github.com/voitanos)) [@andrewconnell](//github.com/andrewconnell) |
+| QA                   | Rob Windsor (Microsoft MVP, PAIT Group) [@rob-windsor](//github.com/rob-windsor)                               |
+| QA                   | Julie Turner (Microsoft MVP, Sympraxis Consulting) [@juliemturner](//github.com/juliemturner)                  |
+| Sponsor / Support    | Yina Arenas (Microsoft) [@yinaa](//github.com/yinaa)                                                           |
 
 ## Version history
 
 | Version |        Date        |                       Comments                       |
 | ------- | ------------------ | ---------------------------------------------------- |
+| 1.13    | March 10, 2020     | 2020Q3 content refresh                               |
 | 1.12    | January 14, 2020   | Port module to MS Learn                              |
 | 1.11    | December 9, 2019   | 2020Q2 content refresh                               |
 | 1.10    | September 9, 2019  | 2020Q1 content refresh                               |
