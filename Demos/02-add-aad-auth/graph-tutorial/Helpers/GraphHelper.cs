@@ -20,7 +20,21 @@ namespace graph_tutorial.Helpers
                         return Task.FromResult(0);
                     }));
 
-            return await graphClient.Me.Request().GetAsync();
+            var user = await graphClient.Me.Request()
+                .Select(u => new {
+                    u.DisplayName,
+                    u.Mail,
+                    u.UserPrincipalName
+                })
+                .GetAsync();
+
+            return new CachedUser
+            {
+                Avatar = string.Empty,
+                DisplayName = user.DisplayName,
+                Email = string.IsNullOrEmpty(user.Mail) ?
+                    user.UserPrincipalName : user.Mail
+            };
         }
     }
 }
