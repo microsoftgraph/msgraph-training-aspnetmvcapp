@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+using graph_tutorial.Models;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using System.Security.Claims;
@@ -9,14 +10,6 @@ using System.Web;
 
 namespace graph_tutorial.TokenStorage
 {
-    // Simple class to serialize into the session
-    public class CachedUser
-    {
-        public string DisplayName { get; set; }
-        public string Email { get; set; }
-        public string Avatar { get; set; }
-    }
-
     public class SessionTokenStore
     {
         private static readonly ReaderWriterLockSlim sessionLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
