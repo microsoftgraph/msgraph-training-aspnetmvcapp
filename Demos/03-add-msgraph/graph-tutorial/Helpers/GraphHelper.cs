@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+using graph_tutorial.Models;
 using Microsoft.Graph;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
