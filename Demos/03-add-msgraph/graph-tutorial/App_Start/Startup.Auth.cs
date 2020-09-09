@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-using graph_tutorial.Helpers;
-using graph_tutorial.TokenStorage;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -12,9 +10,11 @@ using Microsoft.Owin.Security.Notifications;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
 using System.Configuration;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using graph_tutorial.Helpers;
+using graph_tutorial.TokenStorage;
+using System.Security.Claims;
 
 namespace graph_tutorial
 {
@@ -70,7 +70,7 @@ namespace graph_tutorial
         }
 
         private static Task OnAuthenticationFailedAsync(AuthenticationFailedNotification<OpenIdConnectMessage,
-          OpenIdConnectAuthenticationOptions> notification)
+            OpenIdConnectAuthenticationOptions> notification)
         {
             notification.HandleResponse();
             string redirect = $"/Home/Error?message={notification.Exception.Message}";
