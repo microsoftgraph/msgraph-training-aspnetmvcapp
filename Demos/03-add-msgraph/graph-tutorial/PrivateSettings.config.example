@@ -1,7 +1,0 @@
-﻿<?xml version="1.0"?>
-<appSettings>
-    <add key="ida:AppID" value="YOUR_APP_ID" />
-    <add key="ida:AppSecret" value="YOUR_APP_PASSWORD" />
-    <add key="ida:RedirectUri" value="https://localhost:44375/" />
-    <add key="ida:AppScopes" value="User.Read Calendars.Read" />
-</appSettings>

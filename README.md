@@ -30,7 +30,7 @@ This module has been recorded and is available in the Office Development YouTube
 
 ## Contributors
 
-|        Roles         |                                                   Author(s)                                                    |
+| Roles                | Author(s)                                                                                                      |
 | -------------------- | -------------------------------------------------------------------------------------------------------------- |
 | Lab / Slides / Demos | Andrew Connell (Microsoft MVP, [Voitanos](//github.com/voitanos)) [@andrewconnell](//github.com/andrewconnell) |
 | QA                   | Rob Windsor (Microsoft MVP, PAIT Group) [@rob-windsor](//github.com/rob-windsor)                               |
@@ -39,8 +39,9 @@ This module has been recorded and is available in the Office Development YouTube
 
 ## Version history
 
-| Version |        Date        |                       Comments                       |
+| Version | Date               | Comments                                             |
 | ------- | ------------------ | ---------------------------------------------------- |
+| 1.15    | September 10, 2020 | FY2021Q1 content refresh                             |
 | 1.14    | June 11, 2020      | 2020Q4 content refresh                               |
 | 1.13    | March 10, 2020     | 2020Q3 content refresh                               |
 | 1.12    | January 14, 2020   | Port module to MS Learn                              |

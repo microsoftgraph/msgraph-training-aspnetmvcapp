@@ -14,11 +14,10 @@ namespace graph_tutorial.Helpers
         {
             var graphClient = new GraphServiceClient(
                 new DelegateAuthenticationProvider(
-                    (requestMessage) =>
+                    async (requestMessage) =>
                     {
                         requestMessage.Headers.Authorization =
                             new AuthenticationHeaderValue("Bearer", accessToken);
-                        return Task.FromResult(0);
                     }));
 
             var user = await graphClient.Me.Request()
