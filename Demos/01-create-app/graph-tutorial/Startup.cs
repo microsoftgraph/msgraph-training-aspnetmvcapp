@@ -1,4 +1,7 @@
-﻿using Microsoft.Owin;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
+using Microsoft.Owin;
 using Owin;
 using System;
 using System.Threading.Tasks;
