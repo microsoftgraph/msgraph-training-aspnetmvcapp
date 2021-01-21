@@ -2,6 +2,8 @@
 
 This module will introduce you to working with the Microsoft Graph .NET SDK in creating an ASP.NET MVC web application to access data in Office 365.
 
+This module is based on the following Microsoft Learn module: [Build ASP.NET MVC web applications with the Microsoft Graph .NET SDK](https://docs.microsoft.com/learn/modules/msgraph-build-aspnetmvc-apps)
+
 ## Lab - Build MVC apps with the Microsoft Graph .NET SDK
 
 In this lab you will create an ASP.NET MVC application, configured with Azure Active Directory (Azure AD) for authentication & authorization, that accesses data in Office 365 using the Microsoft Graph .NET SDK.
@@ -28,17 +30,22 @@ This module has been recorded and is available in the Office Development YouTube
 
 ## Contributors
 
-| Roles                | Author(s)                                                                                     |
-| -------------------- | --------------------------------------------------------------------------------------------- |
-| Lab Manuals / Slides | Andrew Connell (Microsoft MVP, Voitanos) [@andrewconnell](//github.com/andrewconnell)         |
-| QA                   | Rob Windsor (Microsoft MVP, PAIT Group) [@rob-windsor](//github.com/rob-windsor)              |
-| QA                   | Julie Turner (Microsoft MVP, Sympraxis Consulting) [@juliemturner](//github.com/juliemturner) |
-| Sponsor / Support    | Yina Arenas (Microsoft) [@yinaa](//github.com/yinaa)                                          |
+| Roles                | Author(s)                                                                                                      |
+| -------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Lab / Slides / Demos | Andrew Connell (Microsoft MVP, [Voitanos](//github.com/voitanos)) [@andrewconnell](//github.com/andrewconnell) |
+| QA                   | Rob Windsor (Microsoft MVP, PAIT Group) [@rob-windsor](//github.com/rob-windsor)                               |
+| QA                   | Julie Turner (Microsoft MVP, Sympraxis Consulting) [@juliemturner](//github.com/juliemturner)                  |
+| Sponsor / Support    | Yina Arenas (Microsoft) [@yinaa](//github.com/yinaa)                                                           |
 
 ## Version history
 
-| Version |        Date        |                       Comments                       |
+| Version | Date               | Comments                                             |
 | ------- | ------------------ | ---------------------------------------------------- |
+| 1.16    | December 10, 2020 | FY2021Q2 content refresh                             |
+| 1.15    | September 10, 2020 | FY2021Q1 content refresh                             |
+| 1.14    | June 11, 2020      | 2020Q4 content refresh                               |
+| 1.13    | March 10, 2020     | 2020Q3 content refresh                               |
+| 1.12    | January 14, 2020   | Port module to MS Learn                              |
 | 1.11    | December 9, 2019   | 2020Q2 content refresh                               |
 | 1.10    | September 9, 2019  | 2020Q1 content refresh                               |
 | 1.9     | June 18, 2019      | Updated readme to refreshed screencast recording     |

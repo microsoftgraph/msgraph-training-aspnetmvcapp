@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+using graph_tutorial.Models;
 using Microsoft.Graph;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -16,13 +17,7 @@ namespace graph_tutorial.Helpers
 {
     public static class GraphHelper
     {
-        // Load configuration settings from PrivateSettings.config
-        private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
-        private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
-        private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
-        private static string graphScopes = ConfigurationManager.AppSettings["ida:AppScopes"];
-
-        public static async Task<User> GetUserDetailsAsync(string accessToken)
+        public static async Task<CachedUser> GetUserDetailsAsync(string accessToken)
         {
             var graphClient = new GraphServiceClient(
                 new DelegateAuthenticationProvider(
@@ -32,8 +27,29 @@ namespace graph_tutorial.Helpers
                             new AuthenticationHeaderValue("Bearer", accessToken);
                     }));
 
-            return await graphClient.Me.Request().GetAsync();
+            var user = await graphClient.Me.Request()
+                .Select(u => new {
+                    u.DisplayName,
+                    u.Mail,
+                    u.UserPrincipalName
+                })
+                .GetAsync();
+
+            return new CachedUser
+            {
+                Avatar = string.Empty,
+                DisplayName = user.DisplayName,
+                Email = string.IsNullOrEmpty(user.Mail) ?
+                    user.UserPrincipalName : user.Mail
+            };
         }
+
+        // Load configuration settings from PrivateSettings.config
+        private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
+        private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
+        private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
+        private static List<string> graphScopes =
+            new List<string>(ConfigurationManager.AppSettings["ida:AppScopes"].Split(' '));
 
         public static async Task<IEnumerable<Event>> GetEventsAsync()
         {
@@ -58,15 +74,14 @@ namespace graph_tutorial.Helpers
                             .WithClientSecret(appSecret)
                             .Build();
 
-                        var tokenStore = new SessionTokenStore(idClient.UserTokenCache, 
-                            HttpContext.Current, ClaimsPrincipal.Current);
+                        var tokenStore = new SessionTokenStore(idClient.UserTokenCache,
+                                HttpContext.Current, ClaimsPrincipal.Current);
 
                         var accounts = await idClient.GetAccountsAsync();
 
-                    // By calling this here, the token can be refreshed
-                    // if it's expired right before the Graph call is made
-                    var scopes = graphScopes.Split(' ');
-                        var result = await idClient.AcquireTokenSilent(scopes, accounts.FirstOrDefault())
+                // By calling this here, the token can be refreshed
+                // if it's expired right before the Graph call is made
+                var result = await idClient.AcquireTokenSilent(graphScopes, accounts.FirstOrDefault())
                             .ExecuteAsync();
 
                         requestMessage.Headers.Authorization =
