@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "graph-tutorial", "graph-tutorial\graph-tutorial.csproj", "{2B12D3B0-1F4D-45BA-8D75-FD3B49B08E2F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "graph-tutorial", "graph-tutorial\graph-tutorial.csproj", "{50D686EE-B9DB-4629-9A62-087CF3744ED5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2B12D3B0-1F4D-45BA-8D75-FD3B49B08E2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2B12D3B0-1F4D-45BA-8D75-FD3B49B08E2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2B12D3B0-1F4D-45BA-8D75-FD3B49B08E2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2B12D3B0-1F4D-45BA-8D75-FD3B49B08E2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50D686EE-B9DB-4629-9A62-087CF3744ED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50D686EE-B9DB-4629-9A62-087CF3744ED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50D686EE-B9DB-4629-9A62-087CF3744ED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50D686EE-B9DB-4629-9A62-087CF3744ED5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {3BCFA9F7-DFA6-406C-A7ED-CF6BC5BC3B91}
+		SolutionGuid = {39CEF125-08D9-4C50-9344-89D7439D022C}
 	EndGlobalSection
 EndGlobal
