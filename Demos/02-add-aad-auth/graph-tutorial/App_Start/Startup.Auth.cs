@@ -119,6 +119,5 @@ namespace graph_tutorial
                 notification.Response.Redirect($"/Home/Error?message={message}&debug={ex.Message}");
             }
         }
-
     }
 }
