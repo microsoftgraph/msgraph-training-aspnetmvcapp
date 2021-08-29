@@ -88,5 +88,6 @@ namespace graph_tutorial.Helpers
                             new AuthenticationHeaderValue("Bearer", result.AccessToken);
                     }));
         }
+
     }
 }
