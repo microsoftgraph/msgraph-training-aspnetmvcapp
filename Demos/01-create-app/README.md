@@ -1,3 +1,16 @@
-# Completed module: Create an ASP.NET MVC web app
+# Demo: Create an ASP.NET MVC web app
 
-The version of the project in this directory reflects completing the tutorial up through [Create an ASP.NET MVC web app](https://docs.microsoft.com/graph/tutorials/aspnet?tutorial-step=1). If you use this version of the project, you need to complete the rest of the tutorial starting at [Register the app in the portal](https://docs.microsoft.com/graph/tutorials/aspnet?tutorial-step=2).
+This completed project is the result of the lab exercise **Create an ASP.NET MVC web app** that is referenced in the [README](../../README.md) in this repo.
+
+## Prerequisites
+
+- [Microsoft 365 tenant](https://developer.microsoft.com/office/dev-program?ocid=MSlearn)
+- [.NET Framework 4.8](https://dotnet.microsoft.com/download/dotnet-framework)
+- [Visual Studio 2019](https://visualstudio.microsoft.com/vs/)
+
+## Run this Completed Project
+
+- Create an Azure AD application by following the instructions in the lab exercise associated with this demo. In this step, you are instructed to collect these data elements:
+  - Application ID
+  - Client secret
+- Build and run the application by following the instructions in the lab exercise associated with this demo.

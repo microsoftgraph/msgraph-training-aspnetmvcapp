@@ -102,7 +102,7 @@ namespace graph_tutorial.TokenStorage
             return cachedUser;
         }
 
-        private string GetUsersUniqueId(ClaimsPrincipal user)
+        public string GetUsersUniqueId(ClaimsPrincipal user)
         {
             // Combine the user's object ID with their tenant ID
 

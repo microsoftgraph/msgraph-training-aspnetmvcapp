@@ -16,4 +16,3 @@ namespace graph_tutorial
         }
     }
 }
-
