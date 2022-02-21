@@ -22,9 +22,9 @@ The lab for this module is available in multiple units within the associated Mic
 
 ## Demos
 
-1. [Create an ASP.NET MVC web app](./demos/01-create-app)
-1. [Add Azure AD authentication](./demos/02-add-aad-auth)
-1. [Add Microsoft Graph](./demos/03-add-msgraph)
+1. [Create an ASP.NET MVC web app](./Demos/01-create-app)
+1. [Add Azure AD authentication](./Demos/02-add-aad-auth)
+1. [Add Microsoft Graph](./Demos/03-add-msgraph)
 
 ## Watch the Module
 
@@ -43,6 +43,7 @@ This module has been recorded and is available in the Office Development YouTube
 
 | Version |        Date        |                       Comments                       |
 | ------- | ------------------ | ---------------------------------------------------- |
+| 1.22    | March 1, 2022      | FY2022Q3 content refresh                             |
 | 1.21    | December 8, 2021   | FY2022Q2 content refresh                             |
 | 1.20    | September 13, 2021 | FY2022Q1 content refresh                             |
 | 1.19    | May 26, 2021       | Refresh slides to new template                       |

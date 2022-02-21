@@ -6,7 +6,7 @@ This completed project is the result of the lab exercise **Create an ASP.NET MVC
 
 - [Microsoft 365 tenant](https://developer.microsoft.com/office/dev-program?ocid=MSlearn)
 - [.NET Framework 4.8](https://dotnet.microsoft.com/download/dotnet-framework)
-- [Visual Studio 2019](https://visualstudio.microsoft.com/vs/)
+- [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
 
 ## Run this Completed Project
 

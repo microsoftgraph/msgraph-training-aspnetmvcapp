@@ -4,19 +4,19 @@ Licensed under the MIT license.
 -->
 
 @{
-  ViewBag.Current = "Home";
+    ViewBag.Current = "Home";
 }
 
 <div class="jumbotron">
-  <h1>ASP.NET Graph Tutorial</h1>
-  <p class="lead">This sample app shows how to use the Microsoft Graph API to access a user's data from ASP.NET</p>
-  @if (Request.IsAuthenticated)
-  {
-    <h4>Welcome @ViewBag.User.DisplayName!</h4>
-    <p>Use the navigation bar at the top of the page to get started.</p>
-  }
-  else
-  {
-    @Html.ActionLink("Click here to sign in", "SignIn", "Account", new { area = "" }, new { @class = "btn btn-primary btn-large" })
-  }
+    <h1>ASP.NET Graph Tutorial</h1>
+    <p class="lead">This sample app shows how to use the Microsoft Graph API to access a user's data from ASP.NET</p>
+    @if (Request.IsAuthenticated)
+    {
+        <h4>Welcome @ViewBag.User.DisplayName!</h4>
+        <p>Use the navigation bar at the top of the page to get started.</p>
+    }
+    else
+    {
+        @Html.ActionLink("Click here to sign in", "SignIn", "Account", new { area = "" }, new { @class = "btn btn-primary btn-large" })
+    }
 </div>
