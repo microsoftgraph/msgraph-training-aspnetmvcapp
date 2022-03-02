@@ -28,8 +28,7 @@ namespace graph_tutorial.Helpers
                     }));
 
             var user = await graphClient.Me.Request()
-                .Select(u => new
-                {
+                .Select(u => new {
                     u.DisplayName,
                     u.Mail,
                     u.UserPrincipalName
@@ -81,15 +80,14 @@ namespace graph_tutorial.Helpers
                         var userUniqueId = tokenStore.GetUsersUniqueId(ClaimsPrincipal.Current);
                         var account = await idClient.GetAccountAsync(userUniqueId);
 
-                        // By calling this here, the token can be refreshed
-                        // if it's expired right before the Graph call is made
-                        var result = await idClient.AcquireTokenSilent(graphScopes, account)
-                                    .ExecuteAsync();
+                // By calling this here, the token can be refreshed
+                // if it's expired right before the Graph call is made
+                var result = await idClient.AcquireTokenSilent(graphScopes, account)
+                            .ExecuteAsync();
 
                         requestMessage.Headers.Authorization =
                             new AuthenticationHeaderValue("Bearer", result.AccessToken);
                     }));
         }
-
     }
 }
