@@ -44,9 +44,9 @@ namespace graph_tutorial.Helpers
             };
         }
 
-        // Load configuration settings from PrivateSettings.config
-        private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
-        private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
+        // Load configuration settings from Web.config
+        private static string appId = ConfigurationManager.AppSettings["ida:ClientId"];
+        private static string appSecret = ConfigurationManager.AppSettings["ida:ClientSecret"];
         private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
         private static List<string> graphScopes =
             new List<string>(ConfigurationManager.AppSettings["ida:AppScopes"].Split(' '));

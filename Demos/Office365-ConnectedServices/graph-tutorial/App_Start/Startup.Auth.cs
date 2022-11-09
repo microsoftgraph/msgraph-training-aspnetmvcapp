@@ -15,16 +15,20 @@ using System.Web;
 using graph_tutorial.Helpers;
 using graph_tutorial.TokenStorage;
 using System.Security.Claims;
+using System.IO;
 
 namespace graph_tutorial
 {
     public partial class Startup
     {
-        // Load configuration settings from PrivateSettings.config
-        private static string appId = ConfigurationManager.AppSettings["ida:AppId"];
-        private static string appSecret = ConfigurationManager.AppSettings["ida:AppSecret"];
+        // Load configuration settings from Web.config
+        private static string aadInstance = ConfigurationManager.AppSettings["ida:AADInstance"];
+        private static string domain = ConfigurationManager.AppSettings["ida:Domain"];
+        private static string appId = ConfigurationManager.AppSettings["ida:ClientId"];
+        private static string appSecret = ConfigurationManager.AppSettings["ida:ClientSecret"];
         private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
         private static string graphScopes = ConfigurationManager.AppSettings["ida:AppScopes"];
+        private static string authority = Path.Combine(aadInstance, domain);
 
         public void ConfigureAuth(IAppBuilder app)
         {
@@ -36,7 +40,7 @@ namespace graph_tutorial
                 new OpenIdConnectAuthenticationOptions
                 {
                     ClientId = appId,
-                    Authority = "https://login.microsoftonline.com/common/v2.0",
+                    Authority = authority,
                     Scope = $"openid email profile offline_access {graphScopes}",
                     RedirectUri = redirectUri,
                     PostLogoutRedirectUri = redirectUri,
@@ -87,6 +91,7 @@ namespace graph_tutorial
             notification.HandleCodeRedemption();
 
             var idClient = ConfidentialClientApplicationBuilder.Create(appId)
+                .WithAuthority(authority)
                 .WithRedirectUri(redirectUri)
                 .WithClientSecret(appSecret)
                 .Build();
