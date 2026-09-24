@@ -1,5 +1,8 @@
 # Microsoft Graph Training Module - Build MVC apps with the Microsoft Graph .NET SDK
 
+> [!IMPORTANT]
+> **This sample is deprecated and is no longer maintained.** For current ASP.NET Core identity and Microsoft Graph examples, use the [ASP.NET Core web app tutorial](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2) and the [Microsoft identity platform code sample catalog](https://learn.microsoft.com/entra/identity-platform/sample-v2-code).
+
 This module will introduce you to working with the Microsoft Graph .NET SDK in creating an ASP.NET MVC web application to access data in Office 365.
 
 This module is based on the following Microsoft Learn module: [Build ASP.NET MVC web applications with the Microsoft Graph .NET SDK](https://docs.microsoft.com/learn/modules/msgraph-build-aspnetmvc-apps)
